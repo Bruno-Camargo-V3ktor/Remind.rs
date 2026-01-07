@@ -1,0 +1,21 @@
+[tasks.start-web]
+workspace = false
+dependencies = ["format", "lint"]
+command = "dx"
+args = ["serve", "-p", "web"]
+
+[tasks.format]
+workspace = false
+command = "cargo"
+args = ["fmt", "--all"]
+
+[tasks.lint]
+workspace = false
+command = "cargo"
+args = ["clippy", "-p", "server", "--", "-D", "warnings"]
+
+[tasks.start-server]
+workspace = false
+dependencies = ["format", "lint"]
+command = "cargo"
+args = ["run", "-p", "server"]

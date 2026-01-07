@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = ["domain", "dtos", "repository", "server", "services", "web"]
+
+[workspace.dependencies]
+actix-web = "4.12.1"
+anyhow = "1.0.100"
+async-trait = "0.1.89"
+chrono = { version = "0.4.42", features = ["serde"] }
+domain = { path = "./domain" }
+dtos = { path = "./dtos" }
+repository = { path = "./repository" }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+services = { path = "./services" }
+thiserror = "2.0.17"
+tokio = { version = "1.49.0", features = ["full"] }
+uuid = { version = "1.19.0", features = ["serde"] }
+validator = { version = "0.20", features = ["derive"] }
