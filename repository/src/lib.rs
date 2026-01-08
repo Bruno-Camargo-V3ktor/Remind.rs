@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+pub mod note;
 pub mod user;
 
 pub type RepositoryResult<T> = Result<T, RepositoryError>;
