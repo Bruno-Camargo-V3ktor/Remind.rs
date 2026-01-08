@@ -4157,6 +4157,11 @@ checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
 [[package]]
 name = "repository"
 version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "domain",
+ "thiserror 2.0.17",
+]
 
 [[package]]
 name = "reqwest"
