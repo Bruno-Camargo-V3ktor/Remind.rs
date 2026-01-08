@@ -24,13 +24,13 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 
 ### 🏁 Fase 1: O Gênese (Fundação)
 
-* [ ] **Setup do Workspace:** Configurar o `Cargo.toml` raiz e as crates `Repository`, `Serivoces` e `etc...`.
-* [ ] **Contratos de Domínio:** Definir as structs `User` e `Note` na crate `shared` para uso universal.
-* [ ] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
+* [x] **Setup do Workspace:** Configurar o `Cargo.toml` raiz e as crates `Repository`, `Serivoces` e `etc...`.
+* [x] **Contratos de Domínio:** Definir as structs `User` e `Note` na crate `models` para uso universal.
+* [] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
 
 ### 🧠 Fase 2: A Alma (Lógica e Abstração)
 
-* [ ] **Traits de Repositório:** Definir as interfaces assíncronas para manipulação de dados.
+* [x] **Traits de Repositório:** Definir as interfaces assíncronas para manipulação de dados.
 * [ ] **Criptografia:** Implementar o módulo de segurança para hashing de senhas.
 * [ ] **Infrastructure:** Codar a implementação concreta para o Surreal.
 
