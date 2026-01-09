@@ -1,5 +1,7 @@
 use dioxus::prelude::*;
 
+mod pages;
+
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {

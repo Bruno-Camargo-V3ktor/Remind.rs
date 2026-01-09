@@ -4531,6 +4531,11 @@ dependencies = [
 [[package]]
 name = "services"
 version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "thiserror 2.0.17",
+ "tokio",
+]
 
 [[package]]
 name = "servo_arc"
