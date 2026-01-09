@@ -1,72 +1,70 @@
-/* App-wide styling */
-body {
-    background-color: #0f1116;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
+:root {
+    /*colors*/
+    --bg-p: #080807;
+    --bg-s: #110f0e;
+    --bg-t: #1c1917;
+    --bg-blur: #0b0a09, 1%;
+
+    --content-p: #ffffff;
+    --content-s: #a3a3a3;
+    --content-t: #696663;
+    --content-inverse: #0a0908;
+
+    --accent-oragen: #ed712e;
+    --accent-red: #eb4b5b;
+    --accent-blue: #55a1f2;
+    --accent-green: #44cb93;
+    --accent-purple: #9d8afe;
+
+    --border-color: #161412;
+
+    /*font*/
+    --font-family: "Onest", sans-serif;
+
+    --heading-medium-size: 2.4rem;
+    --heading-medium-line-h: 3.2rem;
+    --heading-medium-weight: 800;
+
+    --heading-small-size: 2rem;
+    --heading-small-line-h: 2.4rem;
+    --heading-small-weight: 800;
+
+    --paragraph-large-size: 1.6rem;
+    --paragraph-large-line-h: 2rem;
+    --paragraph-large-weight: 500;
+
+    --paragraph-medium-size: 1.4rem;
+    --paragraph-medium-line-h: 1.6rem;
+    --paragraph-medium-weight: 500;
+
+    --paragraph-small-size: 1.2rem;
+    --paragraph-small-line-h: 1.4rem;
+    --paragraph-small-weight: 500;
+
+    --label-large-size: 1.6rem;
+    --label-large-line-h: 2rem;
+    --label-large-weight: 700;
+
+    --label-medium-size: 1.4rem;
+    --label-medium-line-h: 1.6rem;
+    --label-medium-weight: 700;
+
+    --label-small-size: 1.2rem;
+    --label-small-line-h: 1.2rem;
+    --label-small-weight: 700;
 }
 
-#hero {
+* {
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 1.6rem;
 }
 
-#links {
-    width: 400px;
-    text-align: left;
-    font-size: x-large;
-    color: white;
-    display: flex;
-    flex-direction: column;
+html {
+    display: inline;
+    background-color: var(--bg-p);
+    color: var(--content-p);
+    font-family: var(--font-family);
+    font-size: 10px;
 }
-
-#links a {
-    color: white;
-    text-decoration: none;
-    margin-top: 20px;
-    margin: 10px 0px;
-    border: white 1px solid;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-#links a:hover {
-    background-color: #1f1f1f;
-    cursor: pointer;
-}
-
-#header {
-    max-width: 1200px;
-}
-
-/* Navbar */
-#navbar {
-    display: flex;
-    flex-direction: row;
-  }
-  
-#navbar a {
-    color: #ffffff;
-    margin-right: 20px;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-#navbar a:hover {
-    cursor: pointer;
-    color: #91a4d2;
-}
-
-/* Blog page */
-#blog {
-    margin-top: 50px;
-  }
-  
-#blog a {
-    color: #ffffff;
-    margin-top: 50px;
-}
-

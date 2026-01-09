@@ -26,7 +26,7 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 
 * [x] **Setup do Workspace:** Configurar o `Cargo.toml` raiz e as crates `Repository`, `Serivoces` e `etc...`.
 * [x] **Contratos de Domínio:** Definir as structs `User` e `Note` na crate `models` para uso universal.
-* [] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
+* [ ] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
 
 ### 🧠 Fase 2: A Alma (Lógica e Abstração)
 
