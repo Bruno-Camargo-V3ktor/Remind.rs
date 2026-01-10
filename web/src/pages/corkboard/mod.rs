@@ -1,6 +1,48 @@
 use dioxus::prelude::*;
 
+use crate::components::TextInput;
+
+const STYLE: Asset = asset!("./style.css");
+
 #[component]
 pub fn CorkBoardPage() -> Element {
-    rsx! {}
+    let mut value_signal = Signal::new(String::from(""));
+    let mut error_signal = Signal::new(None);
+
+    let validator = move |value: String| {
+        if error_signal().is_some() {
+            error_signal.set(None);
+        }
+        if value.len() > 4 {
+            error_signal.set(Some(String::from(
+                "Por favor escreva no maximo 4 caracteres",
+            )));
+        }
+        value_signal.set(value);
+    };
+
+    rsx! {
+        document::Link { rel: "stylesheet", href: STYLE }
+
+        TextInput {
+            name: "teste",
+            label: "teste",
+            placeholder: "teste",
+            error: error_signal,
+            value: value_signal,
+            validator: validator,
+            content: rsx!{ span { "sasdasd" }}
+        }
+
+        TextInput {
+            name: "teste",
+            label: "teste",
+            placeholder: "teste",
+            value: value_signal,
+            error: error_signal,
+            validator: validator,
+            content: rsx!{ span { "sasdasd" }}
+        }
+
+    }
 }

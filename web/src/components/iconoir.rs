@@ -11,6 +11,6 @@ pub struct IconoirProps {
 #[component]
 pub fn Iconoir(props: IconoirProps) -> Element {
     rsx! {
-        i { class: format!("iconoir-{} {}", props.icon, props.class.unwrap_or_default()), id: props.id.unwrap_or_default(), style: props.style.unwrap_or_default() }
+        i { class: format!("icon iconoir-{} {}", props.icon, props.class.unwrap_or_default()), id: props.id.unwrap_or_default(), style: props.style.unwrap_or_default() }
     }
 }
