@@ -1,6 +1,5 @@
+use crate::components::{Subtitle, TextInput};
 use dioxus::prelude::*;
-
-use crate::components::TextInput;
 
 const STYLE: Asset = asset!("./style.css");
 
@@ -23,6 +22,8 @@ pub fn CorkBoardPage() -> Element {
 
     rsx! {
         document::Link { rel: "stylesheet", href: STYLE }
+
+        Subtitle { text: "Teste" }
 
         TextInput {
             name: "teste",

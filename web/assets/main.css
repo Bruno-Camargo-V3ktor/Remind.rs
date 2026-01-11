@@ -152,3 +152,25 @@ icon {
 
     gap: 0.5rem;
 }
+
+/* Subtitle Component */
+.subtitle-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+    width: max-content;
+    height: max-content;
+
+    gap: 0rem;
+}
+
+.subtitle-text {
+    font-family: var(--font-family);
+    font-size: var(--heading-small-size);
+    font-weight: var(--heading-small-weight);
+    line-height: var(--heading-small-line-h);
+
+    color: var(--content-p);
+}
