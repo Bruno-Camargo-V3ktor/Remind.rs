@@ -1,6 +1,6 @@
 use crate::components::{
-    Button, ButtonVariant, Iconoir, IconoirButton, Property, Subtitle, TextAreaInput, TextInput,
-    Title,
+    Button, ButtonVariant, FloatBar, FloatBarButton, Iconoir, IconoirButton, Property, Subtitle,
+    TextAreaInput, TextInput, Title,
 };
 use dioxus::prelude::*;
 
@@ -22,6 +22,10 @@ pub fn CorkBoardPage() -> Element {
             )));
         }
         value2_signal.set(value);
+    };
+
+    let handle = move |(action, mut state): (String, Signal<String>)| {
+        state.set(action);
     };
 
     rsx! {
@@ -94,6 +98,14 @@ pub fn CorkBoardPage() -> Element {
         Property {
             text: "Green",
             color: "var(--accent-green)"
+        }
+
+        FloatBar { handle: handle, default: "home",
+
+            FloatBarButton { icon: "list", action: "home" }
+            FloatBarButton { icon: "user-circle" , action: "perfil"}
+            FloatBarButton { icon: "log-out" , action: "exit"}
+
         }
     }
 }

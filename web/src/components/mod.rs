@@ -1,4 +1,5 @@
 mod button;
+mod floatbar;
 mod iconoir;
 mod iconoir_button;
 mod property;
@@ -8,6 +9,7 @@ mod textarea_input;
 mod title;
 
 pub use button::*;
+pub use floatbar::*;
 pub use iconoir::*;
 pub use iconoir_button::*;
 pub use property::*;
