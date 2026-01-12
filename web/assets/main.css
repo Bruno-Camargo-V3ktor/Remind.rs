@@ -200,8 +200,8 @@ icon {
     border-radius: 4rem;
 
     transition:
-        border-radius 0.15s,
-        color 0.15s;
+        border-radius 0.1s,
+        color 0.1s;
 }
 
 .button-container .icon {
@@ -228,5 +228,58 @@ icon {
 
 .button-content.secondary-button-color:hover {
     border-radius: 1.2rem;
+    color: var(--content-p);
+}
+
+/* Iconoir-Button Component */
+
+.iconoirbutton-container {
+    display: flex;
+    width: max-content;
+    height: max-content;
+}
+
+.iconoirbutton-content {
+    display: flex;
+    padding: 1.5rem;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    font-size: var(--heading-small-size);
+    font-weight: var(--heading-small-weight);
+    line-height: var(--heading-small-line-h);
+
+    outline: none;
+    border: none;
+    border-radius: 100%;
+
+    transition:
+        border-radius 0.1s,
+        color 0.1s;
+}
+
+.iconoirbutton-p {
+    background-color: var(--accent-oragen);
+    color: var(--content-inverse);
+}
+
+.iconoirbutton-s {
+    background-color: var(--content-inverse);
+    color: var(--accent-oragen);
+}
+
+.iconoirbutton-t {
+    background-color: var(--content-inverse);
+    color: var(--content-p);
+}
+
+.iconoirbutton-content:hover {
+    border-radius: 1.2rem;
+}
+
+.iconoirbutton-content.iconoirbutton-color-s:hover {
     color: var(--content-p);
 }

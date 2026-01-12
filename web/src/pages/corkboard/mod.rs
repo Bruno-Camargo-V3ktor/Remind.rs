@@ -1,4 +1,4 @@
-use crate::components::{Button, Iconoir, Subtitle, TextInput};
+use crate::components::{Button, ButtonVariant, Iconoir, IconoirButton, Subtitle, TextInput};
 use dioxus::prelude::*;
 
 const STYLE: Asset = asset!("./style.css");
@@ -57,6 +57,23 @@ pub fn CorkBoardPage() -> Element {
             inverse: true,
             icon: rsx!( Iconoir { icon: "download" } ),
             text: "label button",
+            onclick: || {}
+        }
+
+        IconoirButton {
+            icon: "list",
+            onclick: || {}
+        }
+
+        IconoirButton {
+            icon: "list",
+            variant: ButtonVariant::Secondary,
+            onclick: || {}
+        }
+
+        IconoirButton {
+            icon: "list",
+            variant: ButtonVariant::Tertiary,
             onclick: || {}
         }
     }
