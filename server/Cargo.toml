@@ -5,3 +5,7 @@ edition = "2024"
 
 [dependencies]
 actix-web = { workspace = true }
+domain = { workspace = true }
+dtos = { workspace = true }
+repository = { workspace = true }
+services = { workspace = true }

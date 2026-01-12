@@ -8,6 +8,7 @@ use std::{
 use tokio::sync::RwLock;
 
 mod user;
+pub use user::*;
 
 #[async_trait::async_trait]
 pub trait Service: Sync + Send {
