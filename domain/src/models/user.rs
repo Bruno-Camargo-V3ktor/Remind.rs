@@ -16,3 +16,24 @@ pub struct User {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
+
+impl User {
+    pub fn new(name: String, email: String, password: String) -> Self {
+        Self {
+            id: UserId::new(),
+            name,
+            email,
+            password,
+            bio: String::new(),
+            photo_url: "default.png".into(),
+            created_at: Utc::now(),
+            updated_at: Utc::now(),
+        }
+    }
+}
+
+impl UserId {
+    pub fn new() -> Self {
+        Self(Uuid::new_v4())
+    }
+}

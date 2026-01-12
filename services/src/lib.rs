@@ -1,20 +1,22 @@
 use std::{
     any::{Any, TypeId},
     collections::HashMap,
+    error::Error,
+    fmt::Debug,
     sync::Arc,
 };
-
-use thiserror::Error;
 use tokio::sync::RwLock;
 
-pub type ServiceResult<T> = Result<T, ServiceError>;
+mod user;
 
 #[async_trait::async_trait]
 pub trait Service: Sync + Send {
-    type Input: Sync + Send;
-    type Result: Sync + Send;
+    type Out: Send + Sync;
+    async fn run(&self) -> Result<Self::Out, impl ServiceError>;
+}
 
-    async fn run(&self, dto: Self::Input) -> ServiceResult<Self::Result>;
+pub trait ServiceBuilder: Sync + Send {
+    fn type_service(&self) -> TypeId;
 }
 
 pub struct ServiceManager {
@@ -28,9 +30,9 @@ impl ServiceManager {
         }
     }
 
-    pub async fn register<S: Service + 'static>(&self, service: S) {
+    pub async fn register<S: ServiceBuilder + 'static>(&self, service: S) {
         let mut map = self.map.write().await;
-        map.insert(TypeId::of::<S>(), Arc::new(service));
+        map.insert(service.type_service(), Arc::new(service));
     }
 
     pub async fn get<S: Service + 'static>(&self) -> Option<Arc<S>> {
@@ -45,5 +47,4 @@ impl ServiceManager {
     }
 }
 
-#[derive(Error, Debug)]
-pub enum ServiceError {}
+pub trait ServiceError: Error + Debug {}

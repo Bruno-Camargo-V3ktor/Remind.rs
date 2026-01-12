@@ -15,5 +15,5 @@ serde_json = "1.0.149"
 services = { path = "./services" }
 thiserror = "2.0.17"
 tokio = { version = "1.49.0", features = ["full"] }
-uuid = { version = "1.19.0", features = ["serde"] }
+uuid = { version = "1.19.0", features = ["serde", "v4"] }
 validator = { version = "0.20", features = ["derive"] }
