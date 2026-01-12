@@ -1,4 +1,6 @@
-use crate::components::{Button, ButtonVariant, Iconoir, IconoirButton, Subtitle, TextInput};
+use crate::components::{
+    Button, ButtonVariant, Iconoir, IconoirButton, Subtitle, TextInput, Title,
+};
 use dioxus::prelude::*;
 
 const STYLE: Asset = asset!("./style.css");
@@ -22,6 +24,8 @@ pub fn CorkBoardPage() -> Element {
 
     rsx! {
         document::Link { rel: "stylesheet", href: STYLE }
+
+        Title { }
 
         Subtitle { text: "Teste" }
 
