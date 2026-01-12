@@ -152,6 +152,66 @@ icon {
     gap: 0.5rem;
 }
 
+/* TextArea Input Component */
+.textarea-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+
+    height: auto;
+    width: 100%;
+
+    font-size: var(--paragraph-medium-size);
+    font-weight: var(--paragraph-medium-weight);
+    line-height: var(--paragraph-medium-line-h);
+
+    color: var(--content-p);
+}
+
+.textarea-input-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    border: none;
+    outline: none;
+    border-radius: 1rem;
+    padding: 1.2rem;
+
+    min-height: 12rem;
+
+    background-color: var(--bg-s);
+
+    font-size: var(--paragraph-medium-size);
+    font-weight: var(--paragraph-medium-weight);
+    line-height: var(--paragraph-medium-line-h);
+}
+
+.textarea-input-content textarea {
+    background-color: var(--bg-s);
+    border: none;
+    width: 100%;
+    color: var(--content-p);
+
+    resize: none;
+}
+
+.textarea-input-content textarea:focus {
+    background-color: none;
+    border: none;
+    outline: none;
+    color: var(--content-p);
+}
+
+.textarea-input-content textarea::placeholder {
+    color: var(--content-t);
+}
+
+.textarea-input-content:has(textarea:focus) {
+    outline: 1.5px solid var(--content-p);
+}
+
 /* Subtitle Component */
 .subtitle-container {
     display: flex;
@@ -302,4 +362,25 @@ icon {
 
 .title-icon {
     width: 4.25rem;
+}
+
+/* Property Component */
+.property-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: fit-content;
+    height: fit-content;
+
+    font-size: var(--label-small-size);
+    font-weight: var(--label-small-weight);
+    line-height: var(--label-small-line-h);
+
+    outline: none;
+    border: none;
+    border-radius: 1.6rem;
+
+    color: var(--bg-s);
+    padding: 0.5rem 1rem;
 }

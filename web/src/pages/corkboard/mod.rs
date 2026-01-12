@@ -1,5 +1,6 @@
 use crate::components::{
-    Button, ButtonVariant, Iconoir, IconoirButton, Subtitle, TextInput, Title,
+    Button, ButtonVariant, Iconoir, IconoirButton, Property, Subtitle, TextAreaInput, TextInput,
+    Title,
 };
 use dioxus::prelude::*;
 
@@ -7,7 +8,8 @@ const STYLE: Asset = asset!("./style.css");
 
 #[component]
 pub fn CorkBoardPage() -> Element {
-    let mut value_signal = Signal::new(String::from(""));
+    let mut value1_signal = Signal::new(String::from(""));
+    let mut value2_signal = Signal::new(String::from(""));
     let mut error_signal = Signal::new(None);
 
     let validator = move |value: String| {
@@ -19,7 +21,7 @@ pub fn CorkBoardPage() -> Element {
                 "Por favor escreva no maximo 4 caracteres",
             )));
         }
-        value_signal.set(value);
+        value2_signal.set(value);
     };
 
     rsx! {
@@ -29,22 +31,20 @@ pub fn CorkBoardPage() -> Element {
 
         Subtitle { text: "Teste" }
 
-        TextInput {
-            name: "teste",
-            label: "teste",
-            placeholder: "teste",
-            error: error_signal,
-            value: value_signal,
-            validator: validator,
-            content: rsx!{ span { "sasdasd" }}
+        TextAreaInput {
+            name: "test",
+            label: "test",
+            placeholder: "placeholder",
+            value: value1_signal,
+            validator: move |value| { value1_signal.set(value); }
         }
 
         TextInput {
             name: "teste",
             label: "teste",
             placeholder: "teste",
-            value: value_signal,
             error: error_signal,
+            value: value2_signal,
             validator: validator,
             content: rsx!{ span { "sasdasd" }}
         }
@@ -79,6 +79,21 @@ pub fn CorkBoardPage() -> Element {
             icon: "list",
             variant: ButtonVariant::Tertiary,
             onclick: || {}
+        }
+
+        Property {
+            text: "Blue",
+            color: "var(--accent-blue)"
+        }
+
+        Property {
+            text: "Purple",
+            color: "var(--accent-purple)"
+        }
+
+        Property {
+            text: "Green",
+            color: "var(--accent-green)"
         }
     }
 }
