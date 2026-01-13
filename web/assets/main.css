@@ -241,7 +241,7 @@ icon {
 
 .subtitle-text {
     font-family: var(--font-family);
-    font-size: var(--heading-small-size);
+    font-size: var(--heading-medium-size);
     font-weight: var(--heading-small-weight);
     line-height: var(--heading-small-line-h);
 
