@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::pages::{corkboard::CorkBoardPage, login::LoginPage, register::RegisterPage};
+use crate::pages::{
+    corkboard::CorkBoardPage, login::LoginPage, register::RegisterPage,
+    reset_password::ResetPasswordPage,
+};
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -14,8 +17,8 @@ pub enum Route {
     #[route("/login")]
     LoginPage { },
 
-    //#[route("/reset-password/:token")]
-    //ResetPasswordPage { token: String },
+    #[route("/reset-password/:token")]
+    ResetPasswordPage { token: String },
 }
 
 /*

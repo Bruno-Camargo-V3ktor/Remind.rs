@@ -7,16 +7,16 @@ use crate::{
 };
 
 #[component]
-pub fn LoginPage() -> Element {
+pub fn ResetPasswordPage(token: String) -> Element {
     // Email Input
-    let email_value = use_signal(|| String::new());
-    let email_error = use_signal(|| None);
-    let email_validate = move |value| {};
+    let pass01_value = use_signal(|| String::new());
+    let pass01_error = use_signal(|| None);
+    let pass01_validate = move |value| {};
 
     // Password Input
-    let password_value = use_signal(|| String::new());
-    let password_error = use_signal(|| None);
-    let password_validate = move |value| {};
+    let pass02_value = use_signal(|| String::new());
+    let pass02_error = use_signal(|| None);
+    let pass02_validate = move |value| {};
 
     // Button Input
     let on_click = || {};
@@ -24,34 +24,34 @@ pub fn LoginPage() -> Element {
     rsx! {
         FormPageBase {
 
-            Subtitle { text: "Acessar conta" }
+            Subtitle { text: "Reseta senha" }
             div { class: "form-container",
                 form { class: "form-content",
                     div { class: "form-fields",
 
                         TextInput {
-                            name: "email",
-                            label: "E-mail",
-                            placeholder: "Digite seu e-mail",
-                            value: email_value,
-                            error: email_error,
-                            validator: email_validate,
+                            name: "new-password",
+                            label: "Nova Senha",
+                            placeholder: "Digite sua nova senha",
+                            value: pass01_value,
+                            error: pass01_error,
+                            validator: pass01_validate,
                         }
 
                         TextInput {
-                            name: "password",
-                            label: "Senha",
-                            placeholder: "Inisra sua senha",
-                            value: password_value,
-                            error: password_error,
-                            validator: password_validate,
+                            name: "new-password-confirme",
+                            label: "Repitar sua senha",
+                            placeholder: "****",
+                            value: pass02_value,
+                            error: pass02_error,
+                            validator: pass02_validate,
                         }
                     }
 
                     div { class: "form-button",
                         Button {
                             icon: rsx!{},
-                            text: "Acessar conta",
+                            text: "Definir senha",
                             onclick: on_click
                         }
                     }
