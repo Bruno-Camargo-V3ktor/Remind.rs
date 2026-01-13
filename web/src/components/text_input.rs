@@ -11,6 +11,8 @@ pub struct TextInputProps {
     value: Signal<String>,
     validator: EventHandler<String>,
     content: Option<Element>,
+    #[props(default = "text".into())]
+    r#type: String,
 }
 
 #[component]
@@ -25,7 +27,7 @@ pub fn TextInput(props: TextInputProps) -> Element {
             label { r#for: "{props.name}", "{props.label}" }
 
             div { class: "text-input-content",
-                 input { id: "{props.name}", r#type: "text", placeholder: "{props.placeholder}", value: value_signal(), oninput: on_changed_value}
+                 input { id: "{props.name}", r#type: "{props.r#type}", placeholder: "{props.placeholder}", value: value_signal(), oninput: on_changed_value}
                  if let Some(element) = props.content {
                     {element}
                  }

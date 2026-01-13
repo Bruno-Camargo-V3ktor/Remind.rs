@@ -72,6 +72,7 @@ pub fn RegisterPage() -> Element {
                             name: "password",
                             label: "Senha",
                             placeholder: "****",
+                            r#type: "password",
                             value: password_value,
                             error: password_error,
                             validator: password_validate,

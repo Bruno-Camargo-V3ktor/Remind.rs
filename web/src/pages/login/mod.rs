@@ -41,6 +41,7 @@ pub fn LoginPage() -> Element {
                         TextInput {
                             name: "password",
                             label: "Senha",
+                            r#type: "password",
                             placeholder: "Inisra sua senha",
                             value: password_value,
                             error: password_error,
