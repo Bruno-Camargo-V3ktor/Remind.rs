@@ -1,12 +1,21 @@
 use dioxus::prelude::*;
 
-use crate::pages::corkboard::CorkBoardPage;
+use crate::pages::{corkboard::CorkBoardPage, register::RegisterPage};
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 pub enum Route {
     #[route("/")]
     CorkBoardPage {},
+
+    #[route("/register")]
+    RegisterPage { },
+
+    //#[route("/login")]
+    //LoginPage { },
+
+    //#[route("/reset-password/:token")]
+    //ResetPasswordPage { token: String },
 }
 
 /*

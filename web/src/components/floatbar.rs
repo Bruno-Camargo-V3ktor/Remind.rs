@@ -10,10 +10,10 @@ pub struct FloatBarContext(EventHandler<(String, Signal<String>)>, Signal<String
 #[component]
 pub fn FloatBar(
     handle: EventHandler<(String, Signal<String>)>,
-    default: String,
+    state: Signal<String>,
     children: Element,
 ) -> Element {
-    let active = use_signal(|| default);
+    let active = state.clone();
     use_context_provider(|| FloatBarContext(handle, active));
 
     rsx! {

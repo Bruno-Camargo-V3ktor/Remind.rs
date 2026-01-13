@@ -12,6 +12,8 @@ pub fn CorkBoardPage() -> Element {
     let mut value2_signal = Signal::new(String::from(""));
     let mut error_signal = Signal::new(None);
 
+    let mut active_floatbar = use_signal(|| String::from("home"));
+
     let validator = move |value: String| {
         if error_signal().is_some() {
             error_signal.set(None);
@@ -100,7 +102,7 @@ pub fn CorkBoardPage() -> Element {
             color: "var(--accent-green)"
         }
 
-        FloatBar { handle: handle, default: "home",
+        FloatBar { handle: handle, state: active_floatbar,
 
             FloatBarButton { icon: "list", action: "home" }
             FloatBarButton { icon: "user-circle" , action: "perfil"}

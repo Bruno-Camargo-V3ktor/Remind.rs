@@ -1,0 +1,49 @@
+.form-page-container {
+    display: flex;
+    flex-grow: 1;
+
+    height: 100%;
+
+    padding: 3.2rem;
+}
+
+.form-page-decoration {
+    display: flex;
+    flex-grow: 1.75;
+
+    border-radius: 2rem;
+    border: none;
+    background-color: transparent;
+}
+
+.img-decoration {
+    width: 100%;
+    height: 100%;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: 2rem;
+    border: 0.25rem solid var(--bg-p);
+}
+
+.form-page-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    justify-content: start;
+    align-items: center;
+
+    padding: 6.4rem 0 0 0;
+}
+
+.form-page-title {
+    width: fit-content;
+}
+
+.form-page-children {
+    width: 100%;
+    height: 100%;
+}
