@@ -1,34 +1,90 @@
-use std::sync::Arc;
+#![allow(dead_code)]
 
-use repository::{
-    note::NoteRepository,
-    property::{self, PropertyRepository},
-    user::UserRepository,
-};
-use services::ServiceManager;
+use crate::{config::ConfigApp, routers::index};
+use actix_web::{HttpServer, web};
+use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
+use services::{ServiceBuilder, ServiceManager};
+use std::{io, sync::Arc, time::Duration};
+
+#[derive(Default)]
+pub struct AppBuilder {
+    services: Option<Arc<ServiceManager>>,
+    config: Option<Arc<ConfigApp>>,
+    user_repo: Option<Arc<dyn UserRepository + 'static + Send + Sync>>,
+    property_repo: Option<Arc<dyn PropertyRepository + 'static + Send + Sync>>,
+    note_repo: Option<Arc<dyn NoteRepository + 'static + Send + Sync>>,
+}
+
+impl AppBuilder {
+    pub fn services(&mut self, arg: ServiceManager) {
+        self.services = Some(Arc::new(arg));
+    }
+
+    pub fn config(&mut self, config: ConfigApp) {
+        self.config = Some(Arc::new(config));
+    }
+
+    pub fn user_repo(&mut self, repo: Arc<impl UserRepository + 'static + Send + Sync>) {
+        self.user_repo = Some(repo);
+    }
+
+    pub fn note_repo(&mut self, repo: Arc<impl NoteRepository + 'static + Send + Sync>) {
+        self.note_repo = Some(repo);
+    }
+
+    pub fn property_repo(&mut self, repo: Arc<impl PropertyRepository + 'static + Send + Sync>) {
+        self.property_repo = Some(repo);
+    }
+
+    pub async fn add_service(&mut self, service: impl ServiceBuilder + 'static) {
+        self.services.as_ref().unwrap().register(service).await;
+    }
+
+    pub fn build(self) -> App {
+        App {
+            services: self.services.expect("not defined services"),
+            config: self.config.expect("not defined config"),
+            user_repo: self.user_repo.expect("not defined user_repo"),
+            property_repo: self.property_repo.expect("not defined property_repo"),
+            note_repo: self.note_repo.expect("not defined note_repo"),
+        }
+    }
+}
 
 #[derive(Clone)]
-pub struct AppState {
+pub struct App {
     pub services: Arc<ServiceManager>,
+    pub config: Arc<ConfigApp>,
     pub user_repo: Arc<dyn UserRepository + 'static + Send + Sync>,
     pub property_repo: Arc<dyn PropertyRepository + 'static + Send + Sync>,
     pub note_repo: Arc<dyn NoteRepository + 'static + Send + Sync>,
 }
 
-impl AppState {
-    pub async fn new<Fut: Future<Output = AppState>, F: FnMut(AppState) -> Fut>(
-        user_repo: impl UserRepository + 'static + Send + Sync,
-        property_repo: impl PropertyRepository + 'static + Send + Sync,
-        note_repo: impl NoteRepository + 'static + Send + Sync,
+impl App {
+    pub async fn new<Fut: Future<Output = App>, F: FnMut(AppBuilder) -> Fut>(
         mut clousure: F,
     ) -> Self {
-        let state = Self {
-            services: Arc::new(ServiceManager::new()),
-            user_repo: Arc::new(user_repo),
-            property_repo: Arc::new(property_repo),
-            note_repo: Arc::new(note_repo),
-        };
+        let mut builder = AppBuilder::default();
+        builder.services(ServiceManager::default());
 
-        clousure(state).await
+        clousure(builder).await
+    }
+
+    pub async fn run(&self) -> io::Result<()> {
+        let app_state = web::Data::new(self.clone());
+
+        HttpServer::new(move || {
+            actix_web::App::new()
+                .app_data(app_state.clone())
+                .service(index)
+        })
+        .server_hostname(&self.config.server.hostname)
+        .workers(self.config.server.workers)
+        .keep_alive(Duration::from_secs(self.config.server.keep_alive_secs))
+        .bind(&self.config.server.addr)?
+        .run()
+        .await?;
+
+        Ok(())
     }
 }

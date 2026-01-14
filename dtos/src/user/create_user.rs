@@ -34,13 +34,13 @@ impl CreateUserDTO {
                         let msg = format!(
                             "{}: {}",
                             field,
-                            error.message.clone().unwrap_or(error.code.clone().into())
+                            error.message.clone().unwrap_or(error.code.clone())
                         );
                         mensagens.push(msg);
                     }
                 }
 
-                return Err(mensagens);
+                Err(mensagens)
             }
         }
     }

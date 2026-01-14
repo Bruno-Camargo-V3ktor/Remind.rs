@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct UserId(Uuid);
 
 #[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
@@ -20,7 +20,7 @@ pub struct User {
 impl User {
     pub fn new(name: String, email: String, password: String) -> Self {
         Self {
-            id: UserId::new(),
+            id: UserId::default(),
             name,
             email,
             password,
@@ -29,11 +29,5 @@ impl User {
             created_at: Utc::now(),
             updated_at: Utc::now(),
         }
-    }
-}
-
-impl UserId {
-    pub fn new() -> Self {
-        Self(Uuid::new_v4())
     }
 }

@@ -1,43 +1,46 @@
-use crate::app::AppState;
-use actix_web::{App, HttpServer, Responder, get, web};
+use crate::{app::App, config::ConfigApp};
+use figment::{
+    Figment,
+    providers::{Env, Format, Json},
+};
 use repository::{
     note::NoteInMemoryRepository, property::PropertyInMemoryRepository,
     user::UserInMemoryRepository,
 };
 use services::CreateUserService;
-use std::io;
+use std::sync::Arc;
 
 mod app;
+mod config;
+mod routers;
 
 #[actix_web::main]
-async fn main() -> io::Result<()> {
-    let app_state = AppState::new(
-        UserInMemoryRepository::new(vec![]),
-        PropertyInMemoryRepository::new(vec![]),
-        NoteInMemoryRepository::new(vec![]),
-        |app| async {
-            app.services
-                .register(CreateUserService::builder(app.user_repo.clone()))
-                .await;
+async fn main() {
+    let app = App::new(|mut app| async {
+        let _ = dotenv::dotenv();
 
-            app
-        },
-    )
+        let config: ConfigApp = Figment::new()
+            .merge(Env::prefixed("REMIND_").split("__"))
+            .merge(Json::file("config.json"))
+            .extract()
+            .expect("Invalid Configuration");
+
+        app.config(config);
+
+        let user_repo = Arc::new(UserInMemoryRepository::new(vec![]));
+        let property_repo = Arc::new(PropertyInMemoryRepository::new(vec![]));
+        let note_repo = Arc::new(NoteInMemoryRepository::new(vec![]));
+
+        app.add_service(CreateUserService::builder(user_repo.clone()))
+            .await;
+
+        app.user_repo(user_repo);
+        app.property_repo(property_repo);
+        app.note_repo(note_repo);
+
+        app.build()
+    })
     .await;
 
-    HttpServer::new(move || {
-        App::new()
-            .app_data(web::Data::new(app_state.clone()))
-            .service(index)
-    })
-    .bind("0.0.0.0:3000")?
-    .run()
-    .await?;
-
-    Ok(())
-}
-
-#[get("/")]
-async fn index() -> impl Responder {
-    "Hello"
+    let _ = app.run().await;
 }

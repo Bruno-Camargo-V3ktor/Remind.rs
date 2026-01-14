@@ -6,6 +6,9 @@ edition = "2024"
 [dependencies]
 actix-web = { workspace = true }
 domain = { workspace = true }
+dotenv = "0.15.0"
 dtos = { workspace = true }
+figment = { version = "0.10.19", features = ["env", "json"] }
 repository = { workspace = true }
+serde = { workspace = true }
 services = { workspace = true }

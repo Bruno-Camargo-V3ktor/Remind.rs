@@ -30,12 +30,12 @@ impl Repository for UserInMemoryRepository {
     }
     async fn list(&self, quantity: usize, page: usize) -> RepositoryResult<Vec<Self::Entity>> {
         let registers = self.registres.read().await;
-        let list: Vec<_> = registers.iter().map(|(_id, e)| e.clone()).collect();
+        let list: Vec<_> = registers.values().cloned().collect();
 
-        let start = 0 + (page * quantity);
+        let start = page * quantity;
         let end = (start + quantity).clamp(start, list.len() - 1);
 
-        Ok(list[start..=end].iter().cloned().collect())
+        Ok(list[start..=end].to_vec())
     }
     async fn create(&self, entity: Self::Entity) -> RepositoryResult<Self::Entity> {
         let mut registers = self.registres.write().await;
