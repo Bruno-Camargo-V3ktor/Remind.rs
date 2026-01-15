@@ -1,0 +1,11 @@
+DEFINE TABLE IF NOT EXISTS propertys SCHEMAFULL;
+
+DEFINE FIELD IF NOT EXISTS id ON propertys TYPE UUID;
+DEFINE FIELD IF NOT EXISTS title ON propertys TYPE string;
+DEFINE FIELD IF NOT EXISTS color ON propertys TYPE number;
+DEFINE FIELD IF NOT EXISTS value ON propertys TYPE number;
+DEFINE FIELD IF NOT EXISTS types ON propertys TYPE "Category" | "Priority";
+DEFINE FIELD IF NOT EXISTS created_at ON propertys TYPE datetime;
+DEFINE FIELD IF NOT EXISTS updated_at ON propertys TYPE datetime;
+
+DEFINE FIELD IF NOT EXISTS user_id on propertys TYPE Record<users>;
