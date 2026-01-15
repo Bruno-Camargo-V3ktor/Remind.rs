@@ -31,11 +31,11 @@ pub enum PropertyTypes {
 }
 
 impl Property {
-    pub fn new(r#type: &PropertyTypes, name: &String, color: u32, value: u32) -> Self {
+    pub fn new(r#type: &PropertyTypes, name: &str, color: u32, value: u32) -> Self {
         Self {
             id: PropertyId::default(),
             r#type: r#type.clone(),
-            name: name.clone(),
+            name: name.to_owned(),
             color,
             value,
             created_at: Utc::now(),

@@ -28,7 +28,7 @@ impl Note {
             id: NoteId::default(),
             title: title.into(),
             content: String::new(),
-            color: color.clone(),
+            color: *color,
             image: image.clone(),
             created_at: Utc::now(),
             updated_at: Utc::now(),
