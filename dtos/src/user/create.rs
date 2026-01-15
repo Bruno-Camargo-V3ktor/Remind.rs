@@ -2,6 +2,8 @@ use domain::models::User;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
+use crate::is_valid;
+
 #[derive(Validate, Serialize, Deserialize)]
 pub struct CreateUserDTO {
     #[validate(length(min = 1, max = 20))]
@@ -19,29 +21,14 @@ pub struct CreateUserDTO {
 
 impl CreateUserDTO {
     pub fn to_user(&self) -> Result<User, Vec<String>> {
-        match self.validate() {
+        match is_valid(self) {
             Ok(_) => Ok(User::new(
                 format!("{} {}", self.first_name, self.last_name),
                 self.email.clone(),
                 self.password.clone(),
             )),
 
-            Err(err) => {
-                let mut mensagens = vec![];
-
-                for (field, errors) in err.field_errors() {
-                    if let Some(error) = errors.first() {
-                        let msg = format!(
-                            "{}: {}",
-                            field,
-                            error.message.clone().unwrap_or(error.code.clone())
-                        );
-                        mensagens.push(msg);
-                    }
-                }
-
-                Err(mensagens)
-            }
+            Err(err) => Err(err),
         }
     }
 }

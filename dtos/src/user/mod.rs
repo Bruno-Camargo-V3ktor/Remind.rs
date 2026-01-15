@@ -1,9 +1,9 @@
-mod create_user;
-mod login_user;
+mod create;
+mod login;
 mod reset_password;
-mod udpdate_user;
+mod udpdate;
 
-pub use create_user::*;
-pub use login_user::*;
+pub use create::*;
+pub use login::*;
 pub use reset_password::*;
-pub use udpdate_user::*;
+pub use udpdate::*;
