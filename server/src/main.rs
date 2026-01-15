@@ -1,8 +1,4 @@
-use crate::{app::App, config::ConfigApp};
-use figment::{
-    Figment,
-    providers::{Env, Format, Json},
-};
+use crate::{app::App, config::load_config, db::connection_db};
 use repository::{
     note::NoteInMemoryRepository, property::PropertyInMemoryRepository,
     user::UserInMemoryRepository,
@@ -12,19 +8,16 @@ use std::sync::Arc;
 
 mod app;
 mod config;
+mod db;
 mod routers;
 
 #[actix_web::main]
 async fn main() {
+    let _ = dotenv::dotenv();
+    let _db = connection_db().await;
+
     let app = App::new(|mut app| async {
-        let _ = dotenv::dotenv();
-
-        let config: ConfigApp = Figment::new()
-            .merge(Env::prefixed("REMIND_").split("__"))
-            .merge(Json::file("config.json"))
-            .extract()
-            .expect("Invalid Configuration");
-
+        let config = load_config();
         app.config(config);
 
         let user_repo = Arc::new(UserInMemoryRepository::new(vec![]));
