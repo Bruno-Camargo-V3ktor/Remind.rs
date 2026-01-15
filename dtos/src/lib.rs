@@ -1,8 +1,11 @@
 mod note;
+mod property;
 mod user;
 
 pub use note::*;
+pub use property::*;
 pub use user::*;
+
 use validator::Validate;
 
 pub fn is_valid<T: Validate>(dto: T) -> Result<T, Vec<String>> {
