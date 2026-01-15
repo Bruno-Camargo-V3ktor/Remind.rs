@@ -1,13 +1,16 @@
 use dioxus::prelude::*;
 
 use crate::pages::{
-    corkboard::CorkBoardPage, login::LoginPage, register::RegisterPage,
+    corkboard::CorkBoardPage, login::LoginPage, preview::PreviewPage, register::RegisterPage,
     reset_password::ResetPasswordPage,
 };
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 pub enum Route {
+    #[route("/preview")]
+    PreviewPage { },
+
     #[route("/")]
     CorkBoardPage {},
 
