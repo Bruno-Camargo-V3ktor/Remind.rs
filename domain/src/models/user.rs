@@ -1,9 +1,24 @@
+use std::str::FromStr;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Default, Debug, Clone, Hash, PartialEq, Eq)]
-pub struct UserId(Uuid);
+#[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
+pub struct UserId(pub Uuid);
+
+impl Default for UserId {
+    fn default() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
+
+impl FromStr for UserId {
+    type Err = ();
+    fn from_str(id: &str) -> Result<Self, Self::Err> {
+        Ok(Self(Uuid::from_str(id).unwrap()))
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
 pub struct User {

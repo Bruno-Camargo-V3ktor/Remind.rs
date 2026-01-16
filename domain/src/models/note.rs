@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
-pub struct NoteId(Uuid);
+pub struct NoteId(pub Uuid);
 
 impl Default for NoteId {
     fn default() -> Self {

@@ -1,4 +1,7 @@
-use crate::{Repository, RepositoryError, RepositoryResult, user::UserRepository};
+use crate::{
+    Repository, RepositoryError, RepositoryResult,
+    user::{UserEntity, UserRepository},
+};
 use domain::models::{User, UserId};
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::RwLock;
@@ -60,4 +63,8 @@ impl Repository for UserInMemoryRepository {
 }
 
 #[async_trait::async_trait]
-impl UserRepository for UserInMemoryRepository {}
+impl UserRepository for UserInMemoryRepository {
+    async fn get_by_email(&self, _email: String) -> RepositoryResult<UserEntity> {
+        todo!()
+    }
+}

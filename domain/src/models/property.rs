@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
-pub struct PropertyId(Uuid);
+pub struct PropertyId(pub Uuid);
 
 impl Default for PropertyId {
     fn default() -> Self {

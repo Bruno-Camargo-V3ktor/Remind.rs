@@ -5,6 +5,10 @@ edition = "2024"
 
 [dependencies]
 async-trait = { workspace = true }
+chrono = { workspace = true }
 domain = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+surrealdb = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }

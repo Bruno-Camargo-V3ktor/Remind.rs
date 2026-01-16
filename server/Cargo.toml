@@ -12,5 +12,5 @@ figment = { version = "0.10.19", features = ["env", "json"] }
 repository = { workspace = true }
 serde = { workspace = true }
 services = { workspace = true }
-surrealdb = "2.4.1"
+surrealdb = { workspace = true }
 surrealdb-migrations = "2.4.0"

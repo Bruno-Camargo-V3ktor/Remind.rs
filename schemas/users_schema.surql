@@ -7,5 +7,5 @@ DEFINE FIELD IF NOT EXISTS email ON users TYPE string;
 DEFINE FIELD IF NOT EXISTS password ON users TYPE string;
 DEFINE FIELD IF NOT EXISTS bio ON users TYPE string;
 DEFINE FIELD IF NOT EXISTS photo_url ON users TYPE string;
-DEFINE FIELD IF NOT EXISTS created_at ON users TYPE datetime;
-DEFINE FIELD IF NOT EXISTS updated_at ON users TYPE datetime;
+DEFINE FIELD IF NOT EXISTS created_at ON TABLE users VALUE type::datetime($value);
+DEFINE FIELD IF NOT EXISTS updated_at ON TABLE users VALUE type::datetime($value);

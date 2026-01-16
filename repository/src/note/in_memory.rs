@@ -1,14 +1,17 @@
-use crate::{Repository, RepositoryError, RepositoryResult, note::NoteRepository};
-use domain::models::{Note, NoteId, UserId};
+use crate::{
+    Repository, RepositoryError, RepositoryResult,
+    note::{NoteEntity, NoteRepository},
+};
+use domain::models::{NoteId, UserId};
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::RwLock;
 
 pub struct NoteInMemoryRepository {
-    pub registres: Arc<RwLock<HashMap<NoteId, (Note, UserId)>>>,
+    pub registres: Arc<RwLock<HashMap<NoteId, NoteEntity>>>,
 }
 
 impl NoteInMemoryRepository {
-    pub fn new(values: impl IntoIterator<Item = (NoteId, (Note, UserId))>) -> Self {
+    pub fn new(values: impl IntoIterator<Item = (NoteId, NoteEntity)>) -> Self {
         Self {
             registres: Arc::new(RwLock::new(HashMap::from_iter(values))),
         }
@@ -17,7 +20,7 @@ impl NoteInMemoryRepository {
 
 #[async_trait::async_trait]
 impl Repository for NoteInMemoryRepository {
-    type Entity = (Note, UserId);
+    type Entity = NoteEntity;
     type Id = NoteId;
 
     async fn get_by_id(&self, id: Self::Id) -> RepositoryResult<Self::Entity> {
