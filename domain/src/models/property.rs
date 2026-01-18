@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Hash, PartialEq, Eq)]
@@ -8,6 +9,14 @@ pub struct PropertyId(pub Uuid);
 impl Default for PropertyId {
     fn default() -> Self {
         Self(Uuid::new_v4())
+    }
+}
+
+impl FromStr for PropertyId {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(PropertyId(Uuid::from_str(s).unwrap()))
     }
 }
 
