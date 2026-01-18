@@ -1,8 +1,7 @@
 use crate::{app::App, config::load_config, db::connection_db};
 use repository::{
-    note::NoteInMemoryRepository,
-    property::PropertyInMemoryRepository,
-    user::{UserRepository, UserSurrealDbRepository},
+    note::NoteSurrealDbRepository, property::PropertySurrealDbRepository,
+    user::UserSurrealDbRepository,
 };
 use services::CreateUserService;
 use std::sync::Arc;
@@ -22,14 +21,8 @@ async fn main() {
         app.config(config);
 
         let user_repo = Arc::new(UserSurrealDbRepository::new(db.clone()));
-        let property_repo = Arc::new(PropertyInMemoryRepository::new(vec![]));
-        let note_repo = Arc::new(NoteInMemoryRepository::new(vec![]));
-
-        let user01 = user_repo.get_by_email("bruno@camargo.com".into()).await;
-        let user02 = user_repo.get_by_email("larissa@camargo.com".into()).await;
-
-        println!("user01: {user01:#?}\n");
-        println!("user02: {user02:#?}\n");
+        let property_repo = Arc::new(PropertySurrealDbRepository::new(db.clone()));
+        let note_repo = Arc::new(NoteSurrealDbRepository::new(db.clone()));
 
         app.add_service(CreateUserService::builder(user_repo.clone()))
             .await;

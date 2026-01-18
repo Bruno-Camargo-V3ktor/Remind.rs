@@ -17,7 +17,7 @@ pub struct CreateNoteDTO {
 impl CreateNoteDTO {
     pub fn to_note(&self) -> Result<Note, Vec<String>> {
         match is_valid(self) {
-            Ok(_) => Ok(Note::new(&self.title, &self.image, &self.color)),
+            Ok(_) => Ok(Note::new(&self.title, &self.color)),
 
             Err(err) => Err(err),
         }

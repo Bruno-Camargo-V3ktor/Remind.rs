@@ -9,7 +9,7 @@ use std::{str::FromStr, sync::Arc};
 use surrealdb::{RecordId, Surreal, Uuid, engine::any::Any};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct UserQueryDTO {
+pub struct UserQueryDTO {
     pub name: String,
     pub email: String,
     pub password: String,
@@ -34,7 +34,7 @@ impl From<&UserEntity> for UserQueryDTO {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct UserResponseDTO {
+pub struct UserResponseDTO {
     pub id: RecordId,
     pub name: String,
     pub email: String,
@@ -83,7 +83,9 @@ impl Repository for UserSurrealDbRepository {
 
         op_user
             .map(UserEntity::from)
-            .ok_or(RepositoryError::EntityNotFound(format!("User - {uuid}")))
+            .ok_or(RepositoryError::EntityNotFound(format!(
+                "User with id: u'{uuid}' not found"
+            )))
     }
 
     async fn list(&self, quantity: usize, page: usize) -> RepositoryResult<Vec<Self::Entity>> {
@@ -120,12 +122,7 @@ impl Repository for UserSurrealDbRepository {
                 RepositoryError::DatabaseConnection
             })?;
 
-        op_user
-            .map(UserEntity::from)
-            .ok_or(RepositoryError::EntityNotFound(format!(
-                "User - {}",
-                entity.id.0
-            )))
+        op_user.map(UserEntity::from).ok_or(RepositoryError::Unknow)
     }
 
     async fn update(&self, new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
@@ -141,7 +138,9 @@ impl Repository for UserSurrealDbRepository {
 
         op_user
             .map(UserEntity::from)
-            .ok_or(RepositoryError::EntityNotFound(format!("User - {uuid}")))
+            .ok_or(RepositoryError::EntityNotFound(format!(
+                "User with id: u'{uuid}' not found"
+            )))
     }
 
     async fn delete(&self, id: Self::Id) -> RepositoryResult<()> {
@@ -154,7 +153,9 @@ impl Repository for UserSurrealDbRepository {
 
         op_user
             .map(|_| {})
-            .ok_or(RepositoryError::EntityNotFound(format!("User - {uuid}")))
+            .ok_or(RepositoryError::EntityNotFound(format!(
+                "User with id: u'{uuid}' not found"
+            )))
     }
 }
 

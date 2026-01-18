@@ -1,61 +1,69 @@
 use crate::{
     Repository, RepositoryError, RepositoryResult,
-    property::{PropertyEntity, PropertyRepository},
+    note::{NoteEntity, NoteRepository},
 };
 use chrono::{DateTime, Utc};
-use domain::models::{Property, PropertyId, PropertyTypes, UserId};
+use domain::models::{Note, NoteId, PropertyId, UserId};
 use serde::{Deserialize, Serialize};
 use std::{str::FromStr, sync::Arc};
 use surrealdb::{RecordId, Surreal, Uuid, engine::any::Any};
 
 // DTOS...
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PropertyQueryDTO {
-    #[serde(rename = "type")]
-    pub r#type: PropertyTypes,
-    pub name: String,
-    pub color: u32,
-    pub value: u32,
+pub struct NoteQueryDTO {
+    pub title: String,
+    pub content: String,
+    pub color: Option<u32>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub user_id: RecordId,
+    pub propertys: Vec<RecordId>,
 }
 
-impl From<&PropertyEntity> for PropertyQueryDTO {
-    fn from(value: &PropertyEntity) -> Self {
+impl From<&NoteEntity> for NoteQueryDTO {
+    fn from(value: &NoteEntity) -> Self {
+        let property_ids = value.2.clone();
         let user_id = value.1.clone();
         let values = value.0.clone();
 
         Self {
-            r#type: values.r#type,
-            name: values.name,
+            title: values.title,
+            content: values.content,
             color: values.color,
-            value: values.value,
             created_at: values.created_at,
             updated_at: values.updated_at,
+
             user_id: RecordId::from_table_key(
                 "users",
                 Uuid::from_str(&user_id.0.to_string()).unwrap(),
             ),
+            propertys: property_ids
+                .into_iter()
+                .map(|id| {
+                    RecordId::from_table_key(
+                        "propertys",
+                        Uuid::from_str(&id.0.to_string()).unwrap(),
+                    )
+                })
+                .collect(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PropertyResponseDTO {
+pub struct NoteResponseDTO {
     pub id: RecordId,
-    #[serde(rename = "type")]
-    pub r#type: PropertyTypes,
-    pub name: String,
-    pub color: u32,
-    pub value: u32,
+    pub title: String,
+    pub content: String,
+    pub color: Option<u32>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub user_id: RecordId,
+    pub propertys: Vec<RecordId>,
 }
 
-impl From<PropertyResponseDTO> for PropertyEntity {
-    fn from(value: PropertyResponseDTO) -> Self {
+impl From<NoteResponseDTO> for NoteEntity {
+    fn from(value: NoteResponseDTO) -> Self {
         let id_str = &value.id.key().to_string().replace("u", "").replace("'", "");
         let user_str = &value
             .user_id
@@ -64,44 +72,52 @@ impl From<PropertyResponseDTO> for PropertyEntity {
             .replace("u", "")
             .replace("'", "");
 
+        let propertys = value
+            .propertys
+            .into_iter()
+            .map(|p| {
+                let id_str = &p.key().to_string().replace("u", "").replace("'", "");
+                PropertyId::from_str(id_str).unwrap()
+            })
+            .collect();
+
         let user_id = UserId::from_str(user_str).unwrap();
-        let property = Property {
-            id: PropertyId::from_str(id_str).unwrap(),
-            r#type: value.r#type,
-            name: value.name,
+        let note = Note {
+            id: NoteId::from_str(id_str).unwrap(),
+            title: value.title,
             color: value.color,
-            value: value.value,
+            content: value.content,
             created_at: value.created_at,
             updated_at: value.updated_at,
         };
 
-        (property, user_id)
+        (note, user_id, propertys)
     }
 }
 
 // Repository Impl
-pub struct PropertySurrealDbRepository {
+pub struct NoteSurrealDbRepository {
     pub db: Arc<Surreal<Any>>,
 }
 
-impl PropertySurrealDbRepository {
+impl NoteSurrealDbRepository {
     pub fn new(db: Arc<Surreal<Any>>) -> Self {
         Self { db }
     }
 }
 
 #[async_trait::async_trait]
-impl Repository for PropertySurrealDbRepository {
-    type Entity = PropertyEntity;
-    type Id = PropertyId;
+impl Repository for NoteSurrealDbRepository {
+    type Entity = NoteEntity;
+    type Id = NoteId;
 
     async fn get_by_id(&self, id: Self::Id) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&id.0.to_string()).unwrap();
-        let op: Option<PropertyResponseDTO> = self.db.select(("propertys", uuid)).await.unwrap();
+        let op: Option<NoteResponseDTO> = self.db.select(("propertys", uuid)).await.unwrap();
 
-        op.map(PropertyEntity::from)
+        op.map(NoteEntity::from)
             .ok_or(RepositoryError::EntityNotFound(format!(
-                "Property with id: u'{uuid}' not found"
+                "Note with id: u'{uuid}' not found"
             )))
     }
 
@@ -114,25 +130,25 @@ impl Repository for PropertySurrealDbRepository {
 
         let mut query = self
             .db
-            .query("SELECT * FROM propertys LIMIT $qtn START $page")
+            .query("SELECT * FROM notes LIMIT $qtn START $page")
             .bind(("qtn", quantity))
             .bind(("page", index))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
-        match query.take::<Vec<PropertyResponseDTO>>(0) {
-            Ok(list) => Ok(list.into_iter().map(PropertyEntity::from).collect()),
+        match query.take::<Vec<NoteResponseDTO>>(0) {
+            Ok(list) => Ok(list.into_iter().map(NoteEntity::from).collect()),
             Err(_) => Err(RepositoryError::Unknow),
         }
     }
 
     async fn create(&self, entity: Self::Entity) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&entity.0.id.0.to_string()).unwrap();
-        let query: PropertyQueryDTO = PropertyQueryDTO::from(&entity);
+        let query = NoteQueryDTO::from(&entity);
 
-        let op: Option<PropertyResponseDTO> = self
+        let op: Option<NoteResponseDTO> = self
             .db
-            .create(("propertys", uuid))
+            .create(("note", uuid))
             .content(query)
             .await
             .map_err(|e| {
@@ -140,53 +156,53 @@ impl Repository for PropertySurrealDbRepository {
                 RepositoryError::DatabaseConnection
             })?;
 
-        op.map(PropertyEntity::from).ok_or(RepositoryError::Unknow)
+        op.map(NoteEntity::from).ok_or(RepositoryError::Unknow)
     }
 
     async fn update(&self, new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&new_entity.0.id.0.to_string()).unwrap();
-        let query: PropertyQueryDTO = PropertyQueryDTO::from(&new_entity);
+        let query = NoteQueryDTO::from(&new_entity);
 
-        let op: Option<PropertyResponseDTO> = self
+        let op: Option<NoteResponseDTO> = self
             .db
-            .update(("propertys", uuid))
+            .update(("notes", uuid))
             .merge(query)
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
-        op.map(PropertyEntity::from)
+        op.map(NoteEntity::from)
             .ok_or(RepositoryError::EntityNotFound(format!(
-                "Property with id: u'{uuid}' not found"
+                "Note with id: u'{uuid}' not found"
             )))
     }
 
     async fn delete(&self, id: Self::Id) -> RepositoryResult<()> {
         let uuid = Uuid::from_str(&id.0.to_string()).unwrap();
-        let op: Option<PropertyResponseDTO> = self
+        let op: Option<NoteResponseDTO> = self
             .db
-            .delete(("propertys", uuid))
+            .delete(("notes", uuid))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
         op.map(|_| {})
             .ok_or(RepositoryError::EntityNotFound(format!(
-                "Property with id: u'{uuid}' not found"
+                "Note with id: u'{uuid}' not found"
             )))
     }
 }
 
 #[async_trait::async_trait]
-impl PropertyRepository for PropertySurrealDbRepository {
+impl NoteRepository for NoteSurrealDbRepository {
     async fn list_all_by_user(&self, user_id: UserId) -> RepositoryResult<Vec<Self::Entity>> {
         let mut result = self
             .db
-            .query("SELECT * FROM propertys WHERE user_id = $user")
+            .query("SELECT * FROM notes WHERE user_id = $user")
             .bind(("user", user_id))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
-        match result.take::<Vec<PropertyResponseDTO>>(0) {
-            Ok(list) => Ok(list.into_iter().map(PropertyEntity::from).collect()),
+        match result.take::<Vec<NoteResponseDTO>>(0) {
+            Ok(list) => Ok(list.into_iter().map(NoteEntity::from).collect()),
             Err(_) => Err(RepositoryError::Unknow),
         }
     }
