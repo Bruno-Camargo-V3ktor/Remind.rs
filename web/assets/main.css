@@ -463,6 +463,9 @@ icon {
 .form-container {
     display: flex;
     flex-direction: column;
+
+    position: relative;
+
     max-height: 100%;
     height: 100%;
 }
@@ -486,12 +489,16 @@ icon {
 
 /* Note Component */
 .note-container {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+
     overflow: hidden;
     background-color: var(--bg-s);
     border: 0.25rem solid var(--bg-t);
 
     border-radius: 2rem;
-    padding: 1rem;
 
     width: fit-content;
     height: fit-content;
@@ -499,47 +506,75 @@ icon {
 
 .note-content {
     resize: both;
-    overflow: auto;
-    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-    top: -4.5rem;
+    position: static;
 
     display: flex;
     flex-direction: column;
 
-    width: 270px;
-    height: 300px;
+    margin: 1.5rem;
+    padding-top: 0;
+
+    width: 250px;
+    height: 270px;
 
     min-height: 200px;
     min-width: 200px;
 
-    max-width: 550px;
-    max-height: 550px;
+    max-width: 400px;
+    max-height: 400px;
+
+    transition: padding-top 0.15s ease-out;
 }
 
 .note-title {
     display: flex;
     overflow: hidden;
-    position: relative;
+
+    position: absolute;
 
     background-color: var(--bg-t);
     color: var(--content-s);
 
-    left: -1rem;
-    top: -5.5rem;
-    width: calc(100% + 2rem);
+    width: 100%;
     height: 4.5rem;
 
     justify-content: center;
     align-items: center;
 
-    transition: top 0.15s ease-out;
+    transform: translateY(-4.5rem);
+
+    transition: transform 0.15s ease-out;
 }
 
 .note-container:hover .note-title {
-    top: -1rem;
+    transform: translateY(0);
 }
 
 .note-container:hover .note-content {
-    top: 0rem;
+    padding-top: 4.5rem;
+}
+
+.note-body {
+    width: 100%;
+    height: 100%;
+}
+
+.note-input {
+    resize: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    width: 100%;
+    height: 100%;
+
+    background: transparent;
+    color: transparent;
+
+    caret-color: var(--content-p);
+
+    outline: none;
+    border: none;
 }
