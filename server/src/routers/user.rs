@@ -1,5 +1,5 @@
 use actix_web::{
-    HttpResponse, HttpResponseBuilder, Responder,
+    HttpResponseBuilder, Responder,
     http::StatusCode,
     post,
     web::{self, Json},
@@ -29,19 +29,19 @@ pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>)
     match result.as_ref().err().unwrap() {
         CreateUserError::FieldsError(list) => {
             http.status(StatusCode::BAD_REQUEST);
-            return http.json(list);
+            http.json(list)
         }
         CreateUserError::EmailRegistered(err) => {
             http.status(StatusCode::BAD_REQUEST);
-            return http.json(err);
+            http.json(err)
         }
         CreateUserError::RepositoryError(err) => {
             http.status(StatusCode::INTERNAL_SERVER_ERROR);
-            return http.json(err);
+            http.json(err)
         }
         CreateUserError::Unknown => {
             http.status(StatusCode::INTERNAL_SERVER_ERROR);
-            return http.json("Unknow Error");
+            http.json("Unknow Error")
         }
     }
 }

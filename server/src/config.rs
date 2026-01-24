@@ -10,6 +10,7 @@ pub struct ServerConfig {
     pub hostname: String,
     pub workers: usize,
     pub keep_alive_secs: u64,
+    pub storage_dir: String,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

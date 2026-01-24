@@ -76,7 +76,11 @@ impl App {
         HttpServer::new(move || {
             actix_web::App::new()
                 .app_data(app_state.clone())
-                .service(register_user)
+                .service(actix_files::Files::new(
+                    "/public",
+                    &app_state.config.server.storage_dir,
+                ))
+                .service(web::scope("/api").service(register_user))
         })
         .server_hostname(&self.config.server.hostname)
         .workers(self.config.server.workers)
