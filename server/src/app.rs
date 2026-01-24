@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::{config::ConfigApp, routers::index};
+use crate::{config::ConfigApp, routers::*};
 use actix_web::{HttpServer, web};
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
 use services::{ServiceBuilder, ServiceManager};
@@ -76,7 +76,7 @@ impl App {
         HttpServer::new(move || {
             actix_web::App::new()
                 .app_data(app_state.clone())
-                .service(index)
+                .service(register_user)
         })
         .server_hostname(&self.config.server.hostname)
         .workers(self.config.server.workers)

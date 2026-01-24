@@ -13,6 +13,8 @@ pub use user::*;
 #[async_trait::async_trait]
 pub trait Service: Sync + Send {
     type Out: Send + Sync;
+    type Builder: ServiceBuilder + Sync + Send;
+
     async fn run(&self) -> Result<Self::Out, impl ServiceError>;
 }
 
@@ -31,7 +33,7 @@ impl ServiceManager {
         map.insert(service.type_service(), Arc::new(service));
     }
 
-    pub async fn get<S: Service + 'static>(&self) -> Option<Arc<S>> {
+    pub async fn get<S: Service + 'static>(&self) -> Option<Arc<S::Builder>> {
         let map = self.map.read().await;
 
         if let Some(service_any) = map.get(&TypeId::of::<S>()) {

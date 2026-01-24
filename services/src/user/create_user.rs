@@ -41,8 +41,21 @@ impl CreateUserService {
 #[async_trait::async_trait]
 impl Service for CreateUserService {
     type Out = User;
+    type Builder = CreateUserBuilder;
 
     async fn run(&self) -> Result<Self::Out, CreateUserError> {
+        let user_exist = self
+            .user_repo
+            .get_by_email(self.create_user_dto.email.clone())
+            .await
+            .is_ok();
+
+        if user_exist {
+            return Err(CreateUserError::EmailRegistered(
+                self.create_user_dto.email.clone(),
+            ));
+        }
+
         match self.create_user_dto.to_user() {
             Ok(user) => match self.user_repo.create(user).await {
                 Ok(entity) => {
