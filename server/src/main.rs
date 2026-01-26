@@ -9,6 +9,7 @@ use std::sync::Arc;
 mod app;
 mod config;
 mod db;
+mod http;
 mod routers;
 
 #[actix_web::main]
