@@ -41,6 +41,7 @@ async fn main() {
             ("INTERNAL_SERVER_ERROR".into(), 500),
             ("INVALID_CREDENTIALS".into(), 401),
             ("USER_NOT_EXIST".into(), 404),
+            ("INVALID_TOKEN".into(), 401),
         ]));
 
         app.add_service(
