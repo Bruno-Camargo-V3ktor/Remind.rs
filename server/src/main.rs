@@ -4,7 +4,7 @@ use repository::{
     user::UserSurrealDbRepository,
 };
 use security::argon2::Argon2Hash;
-use services::{CreateUserBuilder, ServiceBuilder};
+use services::{CreateUserBuilder, LoginUserBuilder, ServiceBuilder};
 use std::{collections::HashMap, sync::Arc};
 
 mod app;
@@ -38,10 +38,20 @@ async fn main() {
             ("INVALID_FIELDS".into(), 400),
             ("DATABASE_ERROR".into(), 500),
             ("INTERNAL_SERVER_ERROR".into(), 500),
+            ("INVALID_CREDENTIALS".into(), 401),
+            ("USER_NOT_EXIST".into(), 404),
         ]));
 
         app.add_service(
             CreateUserBuilder::new()
+                .password_hash(password_hash.clone())
+                .user_repository(user_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            LoginUserBuilder::new()
                 .password_hash(password_hash.clone())
                 .user_repository(user_repo.clone())
                 .build(),

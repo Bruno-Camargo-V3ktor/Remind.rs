@@ -95,7 +95,11 @@ impl App {
                     "/public",
                     &app_state.config.server.storage_dir,
                 ))
-                .service(web::scope("/api").service(register_user))
+                .service(
+                    web::scope("/api")
+                        .service(register_user)
+                        .service(login_user),
+                )
         })
         .server_hostname(&self.config.server.hostname)
         .workers(self.config.server.workers)
