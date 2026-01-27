@@ -26,17 +26,17 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 
 * [x] **Setup do Workspace:** Configurar o `Cargo.toml` raiz e as crates `Repository`, `Serivoces` e `etc...`.
 * [x] **Contratos de Domínio:** Definir as structs `User` e `Note` na crate `models` para uso universal.
-* [ ] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
+* [x] **Esquema de Dados:** Criar as migrações SQL para tabelas de Usuários e Notas.
 
 ### 🧠 Fase 2: A Alma (Lógica e Abstração)
 
 * [x] **Traits de Repositório:** Definir as interfaces assíncronas para manipulação de dados.
 * [ ] **Criptografia:** Implementar o módulo de segurança para hashing de senhas.
-* [ ] **Infrastructure:** Codar a implementação concreta para o Surreal.
+* [x] **Infrastructure:** Codar a implementação concreta para o Surreal.
 
 ### 🛡️ Fase 3: O Escudo (API e Segurança)
 
-* [ ] **Motor do Backend:** Configurar o servidor Actix e a injeção de dependência via `AppState`.
+* [x] **Motor do Backend:** Configurar o servidor Actix e a injeção de dependência via `AppState`.
 * [ ] **Guardas de Autenticação:** Criar o Middleware de JWT para proteger as rotas sensíveis.
 * [ ] **Handlers de CRUD:** Implementar os endpoints da API com validação rigorosa.
 

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["domain", "dtos", "http", "repository", "server", "services", "web"]
+members = ["domain", "dtos", "http", "repository", "security", "server", "services", "web"]
 
 [workspace.dependencies]
 actix-web = "4.12.1"
