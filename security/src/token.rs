@@ -7,7 +7,7 @@ use sha2::Sha384;
 use std::{collections::BTreeMap, str::FromStr};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct UserToken(String);
+pub struct UserToken(pub String);
 
 impl UserToken {
     pub fn new(key: &str, duration: i64, user_id: UserId) -> Self {
@@ -23,17 +23,17 @@ impl UserToken {
         let mut claims = BTreeMap::new();
 
         claims.insert("sub", id);
-        claims.insert("iat", now.timestamp().to_string());
-        claims.insert("exp", exp.timestamp().to_string());
+        claims.insert("iat", now.to_rfc3339());
+        claims.insert("exp", exp.to_rfc3339());
 
         let token = Token::new(header, claims).sign_with_key(&key).unwrap();
         Self(token.as_str().to_owned())
     }
 
     pub fn validate(&self, key: &str) -> Option<UserId> {
-        let key: Hmac<Sha384> = Hmac::new_from_slice(key.as_bytes()).unwrap();
+        let key: Hmac<Sha384> = Hmac::new_from_slice(key.as_bytes()).ok()?;
         let token: Token<Header, BTreeMap<String, String>, _> =
-            self.0.verify_with_key(&key).unwrap();
+            self.0.verify_with_key(&key).ok()?;
 
         let _header = token.header();
         let claims = token.claims();
@@ -42,7 +42,7 @@ impl UserToken {
         let id_str = claims["sub"].clone();
 
         let now = Utc::now();
-        let exp = DateTime::from_timestamp_nanos(exp_str.parse::<i64>().unwrap());
+        let exp: DateTime<Utc> = DateTime::from_str(&exp_str).ok()?;
 
         if now >= exp {
             None

@@ -1,9 +1,10 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 use dtos::{CreateUserDTO, LoginUserDTO};
+use http::Response;
 use security::token::UserToken;
 use services::{CreateUserService, LoginUserService, Service, ServiceError};
 
-use crate::app::App;
+use crate::{app::App, guards::AuthenticatedUser};
 
 #[post("/users")]
 pub async fn register_user(
@@ -49,4 +50,17 @@ pub async fn login_user(
             http::Response::error(status_code, err.code(), err.description(), &err)
         }
     }
+}
+
+#[get("/user")]
+pub async fn authenticated_user(
+    app: web::Data<App>,
+    auth_user: AuthenticatedUser,
+) -> http::Response {
+    let user_id = auth_user.get_id();
+    Response::success(
+        200,
+        &format!("Ok - {user_id:?}"),
+        &app.config.server.api_version,
+    )
 }

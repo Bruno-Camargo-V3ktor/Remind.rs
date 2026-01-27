@@ -10,6 +10,7 @@ use std::{collections::HashMap, sync::Arc};
 mod app;
 mod config;
 mod db;
+mod guards;
 mod routers;
 
 #[actix_web::main]

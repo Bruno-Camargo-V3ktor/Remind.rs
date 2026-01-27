@@ -98,7 +98,8 @@ impl App {
                 .service(
                     web::scope("/api")
                         .service(register_user)
-                        .service(login_user),
+                        .service(login_user)
+                        .service(authenticated_user),
                 )
         })
         .server_hostname(&self.config.server.hostname)
