@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::{
     any::{Any, TypeId},
     collections::HashMap,
@@ -45,4 +46,8 @@ impl ServiceManager {
     }
 }
 
-pub trait ServiceError: Error + Debug {}
+pub trait ServiceError: Error + Debug {
+    fn code(&self) -> String;
+    fn description(&self) -> String;
+    fn content(&self) -> &impl Serialize;
+}

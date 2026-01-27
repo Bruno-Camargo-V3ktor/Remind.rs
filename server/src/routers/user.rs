@@ -1,16 +1,14 @@
-use actix_web::{
-    HttpResponseBuilder, Responder,
-    http::StatusCode,
-    post,
-    web::{self, Json},
-};
+use actix_web::{post, web};
 use dtos::CreateUserDTO;
 use services::{CreateUserService, Service};
 
 use crate::app::App;
 
 #[post("/users")]
-pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>) -> http::Response {
+pub async fn register_user(
+    app: web::Data<App>,
+    create_dto: web::Json<CreateUserDTO>,
+) -> http::Response {
     let dto = create_dto.0;
     let service = app
         .services

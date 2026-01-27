@@ -8,5 +8,6 @@ async-trait = { workspace = true }
 domain = { workspace = true }
 dtos = { workspace = true }
 repository = { workspace = true }
+serde = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }

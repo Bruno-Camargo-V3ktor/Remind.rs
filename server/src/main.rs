@@ -4,7 +4,7 @@ use repository::{
     user::UserSurrealDbRepository,
 };
 use services::CreateUserService;
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 mod app;
 mod config;
@@ -30,6 +30,13 @@ async fn main() {
         app.user_repo(user_repo);
         app.property_repo(property_repo);
         app.note_repo(note_repo);
+
+        app.add_table_errors_code(HashMap::from([
+            ("EMAIL_ALREADY_EXISTS".into(), 409),
+            ("INVALID_FIELDS".into(), 400),
+            ("DATABASE_ERROR".into(), 500),
+            ("INTERNAL_SERVER_ERROR".into(), 500),
+        ]));
 
         app.build()
     })

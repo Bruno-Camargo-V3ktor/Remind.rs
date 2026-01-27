@@ -1,6 +1,7 @@
 use crate::{Service, ServiceBuilder, ServiceError, user::UserRepositoryType};
 use domain::models::User;
 use dtos::CreateUserDTO;
+use serde::Serialize;
 use std::any::TypeId;
 use thiserror::Error;
 
@@ -71,7 +72,8 @@ impl Service for CreateUserService {
 }
 
 //Error
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Serialize)]
+#[serde(untagged)]
 pub enum CreateUserError {
     #[error("email {0} already registered")]
     EmailRegistered(String),
@@ -86,4 +88,21 @@ pub enum CreateUserError {
     Unknown,
 }
 
-impl ServiceError for CreateUserError {}
+impl ServiceError for CreateUserError {
+    fn code(&self) -> String {
+        match self {
+            Self::EmailRegistered(_) => "EMAIL_ALREADY_EXISTS".into(),
+            Self::FieldsError(_) => "INVALID_FIELDS".into(),
+            Self::RepositoryError(_) => "DATABASE_ERROR".into(),
+            Self::Unknown => "INTERNAL_SERVER_ERROR".into(),
+        }
+    }
+
+    fn content(&self) -> &impl serde::Serialize {
+        self
+    }
+
+    fn description(&self) -> String {
+        format!("{self:?}")
+    }
+}
