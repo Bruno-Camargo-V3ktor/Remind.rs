@@ -1,6 +1,6 @@
 use actix_web::{post, web};
 use dtos::CreateUserDTO;
-use services::{CreateUserService, Service};
+use services::{CreateUserService, Service, ServiceError};
 
 use crate::app::App;
 
@@ -23,30 +23,8 @@ pub async fn register_user(
         Ok(user) => http::Response::success(201, &user, &app.config.server.api_version),
 
         Err(err) => {
-            todo!()
+            let status_code = app.error_code(err.code());
+            http::Response::error(status_code, err.code(), err.description(), &err)
         }
     }
-
-    /*if let Ok(user) = &result {
-        return http.json(user);
-    }
-
-    match result.as_ref().err().unwrap() {
-        CreateUserError::FieldsError(list) => {
-            http.status(StatusCode::BAD_REQUEST);
-            http.json(list)
-        }
-        CreateUserError::EmailRegistered(err) => {
-            http.status(StatusCode::BAD_REQUEST);
-            http.json(err)
-        }
-        CreateUserError::RepositoryError(err) => {
-            http.status(StatusCode::INTERNAL_SERVER_ERROR);
-            http.json(err)
-        }
-        CreateUserError::Unknown => {
-            http.status(StatusCode::INTERNAL_SERVER_ERROR);
-            http.json("Unknow Error")
-        }
-    }*/
 }

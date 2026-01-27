@@ -98,4 +98,8 @@ impl App {
 
         Ok(())
     }
+
+    pub fn error_code(&self, code: String) -> u16 {
+        *self.erros_table.get(&code).unwrap_or(&500u16)
+    }
 }

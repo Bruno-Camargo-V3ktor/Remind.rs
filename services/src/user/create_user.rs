@@ -103,6 +103,6 @@ impl ServiceError for CreateUserError {
     }
 
     fn description(&self) -> String {
-        format!("{self:?}")
+        self.to_string()
     }
 }
