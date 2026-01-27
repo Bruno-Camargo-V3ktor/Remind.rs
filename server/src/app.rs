@@ -4,7 +4,7 @@ use crate::{config::ConfigApp, routers::*};
 use actix_web::{HttpServer, web};
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
 use services::{ServiceBuilder, ServiceManager};
-use std::{io, sync::Arc, time::Duration};
+use std::{collections::HashMap, io, sync::Arc, time::Duration};
 
 #[derive(Default)]
 pub struct AppBuilder {
@@ -13,6 +13,7 @@ pub struct AppBuilder {
     user_repo: Option<Arc<dyn UserRepository + 'static + Send + Sync>>,
     property_repo: Option<Arc<dyn PropertyRepository + 'static + Send + Sync>>,
     note_repo: Option<Arc<dyn NoteRepository + 'static + Send + Sync>>,
+    erros_table: Option<Arc<HashMap<String, u16>>>,
 }
 
 impl AppBuilder {
@@ -40,6 +41,10 @@ impl AppBuilder {
         self.services.as_ref().unwrap().register(service).await;
     }
 
+    pub fn add_table_errors_code(&mut self, table: HashMap<String, u16>) {
+        self.erros_table = Some(Arc::new(table));
+    }
+
     pub fn build(self) -> App {
         App {
             services: self.services.expect("not defined services"),
@@ -47,6 +52,7 @@ impl AppBuilder {
             user_repo: self.user_repo.expect("not defined user_repo"),
             property_repo: self.property_repo.expect("not defined property_repo"),
             note_repo: self.note_repo.expect("not defined note_repo"),
+            erros_table: self.erros_table.expect("nor defined errors table"),
         }
     }
 }
@@ -58,6 +64,7 @@ pub struct App {
     pub user_repo: Arc<dyn UserRepository + 'static + Send + Sync>,
     pub property_repo: Arc<dyn PropertyRepository + 'static + Send + Sync>,
     pub note_repo: Arc<dyn NoteRepository + 'static + Send + Sync>,
+    pub erros_table: Arc<HashMap<String, u16>>,
 }
 
 impl App {

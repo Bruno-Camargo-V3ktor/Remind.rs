@@ -14,12 +14,12 @@ pub struct Response {
 }
 
 impl Response {
-    pub fn success(status_code: u16, data: impl Serialize, version: String) -> Self {
+    pub fn success(status_code: u16, data: &impl Serialize, version: &String) -> Self {
         Self {
             status_code,
             success: true,
             data: Some(serde_json::to_value(data).unwrap()),
-            meta: Some(MetaInfos::new(version)),
+            meta: Some(MetaInfos::new(version.clone())),
             error: None,
         }
     }

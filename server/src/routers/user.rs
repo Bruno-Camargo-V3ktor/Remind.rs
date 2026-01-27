@@ -5,12 +5,12 @@ use actix_web::{
     web::{self, Json},
 };
 use dtos::CreateUserDTO;
-use services::{CreateUserError, CreateUserService, Service};
+use services::{CreateUserService, Service};
 
 use crate::app::App;
 
 #[post("/users")]
-pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>) -> impl Responder {
+pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>) -> http::Response {
     let dto = create_dto.0;
     let service = app
         .services
@@ -20,9 +20,16 @@ pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>)
         .build(dto);
 
     let result = service.run().await;
-    let mut http = HttpResponseBuilder::new(StatusCode::CREATED);
 
-    if let Ok(user) = &result {
+    match result {
+        Ok(user) => http::Response::success(201, &user, &app.config.server.api_version),
+
+        Err(err) => {
+            todo!()
+        }
+    }
+
+    /*if let Ok(user) = &result {
         return http.json(user);
     }
 
@@ -43,5 +50,5 @@ pub async fn register_user(app: web::Data<App>, create_dto: Json<CreateUserDTO>)
             http.status(StatusCode::INTERNAL_SERVER_ERROR);
             http.json("Unknow Error")
         }
-    }
+    }*/
 }
