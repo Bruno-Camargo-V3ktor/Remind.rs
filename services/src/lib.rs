@@ -13,14 +13,17 @@ pub use user::*;
 
 #[async_trait::async_trait]
 pub trait Service: Sync + Send {
-    type Out: Send + Sync;
-    type Builder: ServiceBuilder + Sync + Send;
+    type Args;
+    type Out;
 
-    async fn run(&self) -> Result<Self::Out, impl ServiceError>;
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, impl ServiceError>;
 }
 
 pub trait ServiceBuilder: Sync + Send {
-    fn type_service(&self) -> TypeId;
+    type S: Service;
+
+    fn new() -> Self;
+    fn build(self) -> Self::S;
 }
 
 #[derive(Default)]
@@ -29,12 +32,12 @@ pub struct ServiceManager {
 }
 
 impl ServiceManager {
-    pub async fn register<S: ServiceBuilder + 'static>(&self, service: S) {
+    pub async fn register<S: Service + 'static>(&self, service: S) {
         let mut map = self.map.write().await;
-        map.insert(service.type_service(), Arc::new(service));
+        map.insert(TypeId::of::<S>(), Arc::new(service));
     }
 
-    pub async fn get<S: Service + 'static>(&self) -> Option<Arc<S::Builder>> {
+    pub async fn get<S: Service + 'static>(&self) -> Option<Arc<S>> {
         let map = self.map.read().await;
 
         if let Some(service_any) = map.get(&TypeId::of::<S>()) {

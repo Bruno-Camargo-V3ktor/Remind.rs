@@ -10,14 +10,9 @@ pub async fn register_user(
     create_dto: web::Json<CreateUserDTO>,
 ) -> http::Response {
     let dto = create_dto.0;
-    let service = app
-        .services
-        .get::<CreateUserService>()
-        .await
-        .unwrap()
-        .build(dto);
+    let service = app.services.get::<CreateUserService>().await.unwrap();
 
-    let result = service.run().await;
+    let result = service.run(dto).await;
 
     match result {
         Ok(user) => http::Response::success(201, &user, &app.config.server.api_version),

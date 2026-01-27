@@ -13,6 +13,7 @@ dtos = { workspace = true }
 figment = { version = "0.10.19", features = ["env", "json"] }
 http = { path = "../http/", features = ["actix-web"] }
 repository = { workspace = true }
+security = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 services = { workspace = true }

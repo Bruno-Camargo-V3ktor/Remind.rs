@@ -3,7 +3,8 @@ use repository::{
     note::NoteSurrealDbRepository, property::PropertySurrealDbRepository,
     user::UserSurrealDbRepository,
 };
-use services::CreateUserService;
+use security::argon2::Argon2Hash;
+use services::{CreateUserBuilder, ServiceBuilder};
 use std::{collections::HashMap, sync::Arc};
 
 mod app;
@@ -20,16 +21,17 @@ async fn main() {
         let config = load_config();
         app.config(config);
 
+        let password_hash = Arc::new(Argon2Hash::default());
+
         let user_repo = Arc::new(UserSurrealDbRepository::new(db.clone()));
         let property_repo = Arc::new(PropertySurrealDbRepository::new(db.clone()));
         let note_repo = Arc::new(NoteSurrealDbRepository::new(db.clone()));
 
-        app.add_service(CreateUserService::builder(user_repo.clone()))
-            .await;
+        app.user_repo(user_repo.clone());
+        app.property_repo(property_repo.clone());
+        app.note_repo(note_repo.clone());
 
-        app.user_repo(user_repo);
-        app.property_repo(property_repo);
-        app.note_repo(note_repo);
+        app.password_hash(password_hash.clone());
 
         app.add_table_errors_code(HashMap::from([
             ("EMAIL_ALREADY_EXISTS".into(), 409),
@@ -37,6 +39,14 @@ async fn main() {
             ("DATABASE_ERROR".into(), 500),
             ("INTERNAL_SERVER_ERROR".into(), 500),
         ]));
+
+        app.add_service(
+            CreateUserBuilder::new()
+                .password_hash(password_hash.clone())
+                .user_repository(user_repo.clone())
+                .build(),
+        )
+        .await;
 
         app.build()
     })

@@ -3,7 +3,8 @@
 use crate::{config::ConfigApp, routers::*};
 use actix_web::{HttpServer, web};
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
-use services::{ServiceBuilder, ServiceManager};
+use security::hash::PasswordHash;
+use services::{Service, ServiceManager};
 use std::{collections::HashMap, io, sync::Arc, time::Duration};
 
 #[derive(Default)]
@@ -14,6 +15,7 @@ pub struct AppBuilder {
     property_repo: Option<Arc<dyn PropertyRepository + 'static + Send + Sync>>,
     note_repo: Option<Arc<dyn NoteRepository + 'static + Send + Sync>>,
     erros_table: Option<Arc<HashMap<String, u16>>>,
+    password_hash: Option<Arc<dyn PasswordHash + 'static + Send + Sync>>,
 }
 
 impl AppBuilder {
@@ -37,12 +39,16 @@ impl AppBuilder {
         self.property_repo = Some(repo);
     }
 
-    pub async fn add_service(&mut self, service: impl ServiceBuilder + 'static) {
+    pub async fn add_service(&mut self, service: impl Service + 'static) {
         self.services.as_ref().unwrap().register(service).await;
     }
 
     pub fn add_table_errors_code(&mut self, table: HashMap<String, u16>) {
         self.erros_table = Some(Arc::new(table));
+    }
+
+    pub fn password_hash(&mut self, hased: Arc<dyn PasswordHash + 'static + Send + Sync>) {
+        self.password_hash = Some(hased);
     }
 
     pub fn build(self) -> App {
@@ -52,7 +58,8 @@ impl AppBuilder {
             user_repo: self.user_repo.expect("not defined user_repo"),
             property_repo: self.property_repo.expect("not defined property_repo"),
             note_repo: self.note_repo.expect("not defined note_repo"),
-            erros_table: self.erros_table.expect("nor defined errors table"),
+            erros_table: self.erros_table.expect("not defined errors table"),
+            password_hash: self.password_hash.expect("not defined password_hash"),
         }
     }
 }
@@ -65,6 +72,7 @@ pub struct App {
     pub property_repo: Arc<dyn PropertyRepository + 'static + Send + Sync>,
     pub note_repo: Arc<dyn NoteRepository + 'static + Send + Sync>,
     pub erros_table: Arc<HashMap<String, u16>>,
+    pub password_hash: Arc<dyn PasswordHash + 'static + Send + Sync>,
 }
 
 impl App {

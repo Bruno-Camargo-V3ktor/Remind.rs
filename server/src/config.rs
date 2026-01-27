@@ -24,8 +24,14 @@ pub struct SurrealDbConfig {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
+pub struct SecurityConfig {
+    pub key: String,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ConfigApp {
     pub server: ServerConfig,
+    pub security: SecurityConfig,
     pub surreal_db: Option<SurrealDbConfig>,
 }
 

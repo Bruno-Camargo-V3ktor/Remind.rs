@@ -1,6 +1,15 @@
 [workspace]
 resolver = "2"
-members = ["domain", "dtos", "http", "repository", "security", "server", "services", "web"]
+members = [
+  "domain",
+  "dtos",
+  "http",
+  "repository",
+  "security",
+  "server",
+  "services",
+  "web"
+]
 
 [workspace.dependencies]
 actix-web = "4.12.1"
@@ -10,6 +19,7 @@ chrono = { version = "0.4.42", features = ["serde"] }
 domain = { path = "./domain" }
 dtos = { path = "./dtos" }
 repository = { path = "./repository" }
+security = { path = "./security/" }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 services = { path = "./services" }

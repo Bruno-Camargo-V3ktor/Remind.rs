@@ -1,70 +1,82 @@
 use crate::{Service, ServiceBuilder, ServiceError, user::UserRepositoryType};
 use domain::models::User;
 use dtos::CreateUserDTO;
+use security::hash::PasswordHash;
 use serde::Serialize;
-use std::any::TypeId;
+use std::sync::Arc;
 use thiserror::Error;
 
 // Builder
 pub struct CreateUserBuilder {
-    user_repository: UserRepositoryType,
+    user_repository: Option<UserRepositoryType>,
+    password_hash: Option<Arc<dyn PasswordHash + Send + Sync + 'static>>,
 }
 
 impl CreateUserBuilder {
-    pub fn build(&self, user: CreateUserDTO) -> CreateUserService {
-        CreateUserService {
-            user_repo: self.user_repository.clone(),
-            create_user_dto: user,
-        }
+    pub fn user_repository(mut self, repo: UserRepositoryType) -> Self {
+        self.user_repository = Some(repo);
+        self
+    }
+
+    pub fn password_hash(
+        mut self,
+        password_hash: Arc<dyn PasswordHash + Send + Sync + 'static>,
+    ) -> Self {
+        self.password_hash = Some(password_hash);
+        self
     }
 }
 
 impl ServiceBuilder for CreateUserBuilder {
-    fn type_service(&self) -> std::any::TypeId {
-        TypeId::of::<CreateUserService>()
+    type S = CreateUserService;
+
+    fn new() -> Self {
+        Self {
+            password_hash: None,
+            user_repository: None,
+        }
+    }
+
+    fn build(self) -> Self::S {
+        CreateUserService {
+            user_repo: self.user_repository.expect(""),
+            password_hash: self.password_hash.expect(""),
+        }
     }
 }
 
 // Service
 pub struct CreateUserService {
     user_repo: UserRepositoryType,
-    create_user_dto: CreateUserDTO,
-}
-
-impl CreateUserService {
-    pub fn builder(user_repo: UserRepositoryType) -> CreateUserBuilder {
-        CreateUserBuilder {
-            user_repository: user_repo,
-        }
-    }
+    password_hash: Arc<dyn PasswordHash + Send + Sync + 'static>,
 }
 
 #[async_trait::async_trait]
 impl Service for CreateUserService {
+    type Args = CreateUserDTO;
     type Out = User;
-    type Builder = CreateUserBuilder;
 
-    async fn run(&self) -> Result<Self::Out, CreateUserError> {
-        let user_exist = self
-            .user_repo
-            .get_by_email(self.create_user_dto.email.clone())
-            .await
-            .is_ok();
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, CreateUserError> {
+        let dto = args;
+
+        let user_exist = self.user_repo.get_by_email(dto.email.clone()).await.is_ok();
 
         if user_exist {
-            return Err(CreateUserError::EmailRegistered(
-                self.create_user_dto.email.clone(),
-            ));
+            return Err(CreateUserError::EmailRegistered(dto.email.clone()));
         }
 
-        match self.create_user_dto.to_user() {
-            Ok(user) => match self.user_repo.create(user).await {
-                Ok(entity) => {
-                    return Ok(entity);
-                }
+        match dto.to_user() {
+            Ok(mut user) => {
+                user.password = self.password_hash.generate(&user.password);
 
-                Err(err) => return Err(CreateUserError::RepositoryError(err.to_string())),
-            },
+                match self.user_repo.create(user).await {
+                    Ok(entity) => {
+                        return Ok(entity);
+                    }
+
+                    Err(err) => return Err(CreateUserError::RepositoryError(err.to_string())),
+                }
+            }
 
             Err(field_erros) => return Err(CreateUserError::FieldsError(field_erros)),
         }
