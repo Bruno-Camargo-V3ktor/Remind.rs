@@ -1,4 +1,3 @@
-
 DEFINE TABLE IF NOT EXISTS users SCHEMAFULL;
 
 DEFINE FIELD IF NOT EXISTS id ON users TYPE UUID;
@@ -9,3 +8,4 @@ DEFINE FIELD IF NOT EXISTS bio ON users TYPE string;
 DEFINE FIELD IF NOT EXISTS photo_url ON users TYPE string;
 DEFINE FIELD IF NOT EXISTS created_at ON TABLE users VALUE type::datetime($value);
 DEFINE FIELD IF NOT EXISTS updated_at ON TABLE users VALUE type::datetime($value);
+DEFINE INDEX IF NOT EXISTS userEmailIndex ON TABLE users COLUMNS email UNIQUE;
