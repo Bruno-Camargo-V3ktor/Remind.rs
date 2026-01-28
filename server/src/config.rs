@@ -25,7 +25,8 @@ pub struct SurrealDbConfig {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct SecurityConfig {
-    pub key: String,
+    pub users_key: String,
+    pub reset_key: String,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

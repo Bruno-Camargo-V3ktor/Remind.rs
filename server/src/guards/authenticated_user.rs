@@ -20,13 +20,13 @@ impl FromRequest for AuthenticatedUser {
     fn from_request(req: &actix_web::HttpRequest, _: &mut actix_web::dev::Payload) -> Self::Future {
         let app_state = req.app_data::<web::Data<App>>().unwrap();
         let auth_header = req.headers().get("Authorization");
-        let key = &app_state.config.security.key;
+        let key = &app_state.config.security.users_key;
 
         if let Some(token_str) = auth_header {
             let token_str = token_str.to_str().unwrap();
             let token = UserToken(token_str.to_string());
 
-            if let Some(user_id) = token.validate(&key) {
+            if let Some(user_id) = token.validate(key) {
                 return ready(Ok(AuthenticatedUser(user_id)));
             }
         }

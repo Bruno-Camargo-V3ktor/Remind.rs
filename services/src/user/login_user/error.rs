@@ -33,6 +33,6 @@ impl ServiceError for LoginUserError {
     }
 
     fn description(&self) -> String {
-        self.to_string()
+        self.to_string().trim().to_string()
     }
 }

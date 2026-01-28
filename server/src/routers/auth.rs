@@ -6,7 +6,7 @@ use services::{CreateUserService, LoginUserService, Service, ServiceError};
 
 use crate::{app::App, guards::AuthenticatedUser};
 
-#[post("/users")]
+#[post("/register")]
 pub async fn register_user(
     app: web::Data<App>,
     create_dto: web::Json<CreateUserDTO>,
@@ -18,7 +18,7 @@ pub async fn register_user(
 
     match result {
         Ok(user) => {
-            let token = UserToken::new(&app.config.security.key, 1, user.id.clone());
+            let token = UserToken::new(&app.config.security.users_key, 1, user.id.clone());
             http::Response::success(201, &token, &app.config.server.api_version)
         }
 
@@ -29,7 +29,7 @@ pub async fn register_user(
     }
 }
 
-#[post("/users/login")]
+#[post("/login")]
 pub async fn login_user(
     app: web::Data<App>,
     create_dto: web::Json<LoginUserDTO>,
@@ -41,7 +41,7 @@ pub async fn login_user(
 
     match result {
         Ok(id) => {
-            let token = UserToken::new(&app.config.security.key, 1, id.clone());
+            let token = UserToken::new(&app.config.security.users_key, 1, id.clone());
             http::Response::success(200, &token, &app.config.server.api_version)
         }
 
