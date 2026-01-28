@@ -4,7 +4,7 @@ use repository::{
     user::UserSurrealDbRepository,
 };
 use security::argon2::Argon2Hash;
-use services::{CreateUserBuilder, LoginUserBuilder, ServiceBuilder};
+use services::{CreateUserBuilder, DeleteUserBuilder, LoginUserBuilder, ServiceBuilder};
 use std::{collections::HashMap, sync::Arc};
 
 mod app;
@@ -55,6 +55,13 @@ async fn main() {
         app.add_service(
             LoginUserBuilder::new()
                 .password_hash(password_hash.clone())
+                .user_repository(user_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            DeleteUserBuilder::new()
                 .user_repository(user_repo.clone())
                 .build(),
         )

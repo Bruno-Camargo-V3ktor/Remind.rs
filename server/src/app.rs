@@ -96,12 +96,18 @@ impl App {
                     &app_state.config.server.storage_dir,
                 ))
                 .service(
-                    web::scope("/api").service(
-                        web::scope("/auth")
-                            .service(register_user)
-                            .service(login_user)
-                            .service(authenticated_user),
-                    ),
+                    web::scope("/api")
+                        .service(
+                            web::scope("/auth")
+                                .service(register_user)
+                                .service(login_user)
+                                .service(authenticated_user),
+                        )
+                        .service(
+                            web::scope("users")
+                                .service(update_user)
+                                .service(delete_user),
+                        ),
                 )
         })
         .server_hostname(&self.config.server.hostname)
