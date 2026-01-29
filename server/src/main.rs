@@ -4,7 +4,9 @@ use repository::{
     user::UserSurrealDbRepository,
 };
 use security::argon2::Argon2Hash;
-use services::{CreateUserBuilder, DeleteUserBuilder, LoginUserBuilder, ServiceBuilder};
+use services::{
+    CreateUserBuilder, DeleteUserBuilder, LoginUserBuilder, SendEmailBuilder, ServiceBuilder,
+};
 use std::{collections::HashMap, sync::Arc};
 
 mod app;
@@ -20,7 +22,6 @@ async fn main() {
 
     let app = App::new(|mut app| async {
         let config = load_config();
-        app.config(config);
 
         let password_hash = Arc::new(Argon2Hash::default());
 
@@ -38,11 +39,24 @@ async fn main() {
             ("EMAIL_ALREADY_EXISTS".into(), 409),
             ("INVALID_FIELDS".into(), 400),
             ("DATABASE_ERROR".into(), 500),
+            ("SEND_EMAIL_FAIL".into(), 500),
             ("INTERNAL_SERVER_ERROR".into(), 500),
             ("INVALID_CREDENTIALS".into(), 401),
             ("USER_NOT_EXIST".into(), 404),
             ("INVALID_TOKEN".into(), 401),
         ]));
+
+        app.add_service(
+            SendEmailBuilder::new()
+                .from(
+                    config.email.from_name.clone(),
+                    config.email.from_email.clone(),
+                )
+                .cred(config.email.username.clone(), config.email.password.clone())
+                .smtp(config.email.smtp)
+                .build(),
+        )
+        .await;
 
         app.add_service(
             CreateUserBuilder::new()
@@ -67,6 +81,7 @@ async fn main() {
         )
         .await;
 
+        app.config(config);
         app.build()
     })
     .await;

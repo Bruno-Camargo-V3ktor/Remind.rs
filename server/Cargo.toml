@@ -12,7 +12,6 @@ dotenv = "0.15.0"
 dtos = { workspace = true }
 figment = { version = "0.10.19", features = ["env", "json"] }
 http = { path = "../http/", features = ["actix-web"] }
-lettre = "0.11.19"
 repository = { workspace = true }
 security = { workspace = true }
 serde = { workspace = true }

@@ -7,6 +7,7 @@ edition = "2024"
 async-trait = { workspace = true }
 domain = { workspace = true }
 dtos = { workspace = true }
+lettre = "0.11.19"
 repository = { workspace = true }
 security = { workspace = true }
 serde = { workspace = true }

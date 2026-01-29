@@ -8,7 +8,10 @@ use std::{
 };
 use tokio::sync::RwLock;
 
+mod email;
 mod user;
+
+pub use email::*;
 pub use user::*;
 
 #[async_trait::async_trait]
