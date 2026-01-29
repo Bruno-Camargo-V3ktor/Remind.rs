@@ -7,16 +7,15 @@ pub use error::*;
 pub use service::*;
 
 pub struct From {
-    name: String,
-    email: String,
+    pub name: String,
+    pub email: String,
 }
 
 pub struct To {
-    name: String,
-    email: String,
+    pub name: String,
+    pub email: String,
 }
 
 pub struct Cred {
-    username: String,
-    password: String,
+    pub app_key: String,
 }

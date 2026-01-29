@@ -1,10 +1,16 @@
+use crate::{app::App, guards::AuthenticatedUser};
 use actix_web::{get, post, web};
 use dtos::{CreateUserDTO, LoginUserDTO};
 use http::Response;
 use security::token::UserToken;
-use services::{CreateUserService, LoginUserService, Service, ServiceError};
+use serde::Deserialize;
+use services::{CreateUserService, LoginUserService, SendEmailService, Service, ServiceError, To};
 
-use crate::{app::App, guards::AuthenticatedUser};
+#[derive(Deserialize)]
+struct ResetPasswordInfo {
+    email: String,
+    url: String,
+}
 
 #[post("/register")]
 pub async fn register_user(
@@ -49,6 +55,42 @@ pub async fn login_user(
             let status_code = app.error_code(err.code());
             http::Response::error(status_code, err.code(), err.description(), &err)
         }
+    }
+}
+
+#[post("/reset-password")]
+pub async fn send_email_password(
+    app: web::Data<App>,
+    info: web::Query<ResetPasswordInfo>,
+) -> http::Response {
+    let service = app.services.get::<SendEmailService>().await.unwrap();
+    let result = app.user_repo.get_by_email(info.email.clone()).await;
+
+    match result {
+        Ok(u) => {
+            let token = UserToken::new(&app.config.security.reset_key, 1, u.id);
+            let _url = info.url.clone();
+
+            let args = (
+                To {
+                    name: u.name,
+                    email: u.email,
+                },
+                "Reset Password".to_string(),
+                "Click for Reset your Password".to_string(),
+                format!("<a href=\"#?t={:?}\">Reset Password</a>", token.0),
+            );
+
+            match service.run(args).await {
+                Ok(()) => Response::success(200, &(), &app.config.server.api_version),
+                Err(err) => {
+                    let status_code = app.error_code(err.code());
+                    http::Response::error(status_code, err.code(), err.description(), &err)
+                }
+            }
+        }
+
+        Err(_) => Response::success(200, &(), &app.config.server.api_version),
     }
 }
 

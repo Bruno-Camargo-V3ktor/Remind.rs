@@ -13,8 +13,8 @@ impl SendEmailBuilder {
         self
     }
 
-    pub fn cred(mut self, username: String, password: String) -> Self {
-        self.cred = Some(Cred { username, password });
+    pub fn cred(mut self, key: String) -> Self {
+        self.cred = Some(Cred { app_key: key });
         self
     }
 

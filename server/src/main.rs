@@ -52,8 +52,8 @@ async fn main() {
                     config.email.from_name.clone(),
                     config.email.from_email.clone(),
                 )
-                .cred(config.email.username.clone(), config.email.password.clone())
-                .smtp(config.email.smtp)
+                .cred(config.email.app_key.clone())
+                .smtp(config.email.smtp.clone())
                 .build(),
         )
         .await;

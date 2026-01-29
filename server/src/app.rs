@@ -101,6 +101,7 @@ impl App {
                             web::scope("/auth")
                                 .service(register_user)
                                 .service(login_user)
+                                .service(send_email_password)
                                 .service(authenticated_user),
                         )
                         .service(
