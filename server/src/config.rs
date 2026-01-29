@@ -30,9 +30,19 @@ pub struct SecurityConfig {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
+pub struct EmailConfig {
+    pub smtp: String,
+    pub from_name: String,
+    pub from_email: String,
+    pub username: String,
+    pub password: String,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ConfigApp {
     pub server: ServerConfig,
     pub security: SecurityConfig,
+    pub email: EmailConfig,
     pub surreal_db: Option<SurrealDbConfig>,
 }
 
