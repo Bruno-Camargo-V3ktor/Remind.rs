@@ -77,8 +77,10 @@ pub async fn send_email_password(
                     email: u.email,
                 },
                 "Reset Password".to_string(),
-                "Click for Reset your Password".to_string(),
-                format!("<a href=\"#?t={:?}\">Reset Password</a>", token.0),
+                format!(
+                    "<h3>Click for Reset your Password</h3> <a href=\"#?t={:?}\">Reset Password</a>",
+                    token.0
+                ),
             );
 
             match service.run(args).await {
@@ -97,12 +99,7 @@ pub async fn send_email_password(
 #[get("/user")]
 pub async fn authenticated_user(
     app: web::Data<App>,
-    auth_user: AuthenticatedUser,
+    _auth_user: AuthenticatedUser,
 ) -> http::Response {
-    let user_id = auth_user.get_id();
-    Response::success(
-        200,
-        &format!("Ok - {user_id:?}"),
-        &app.config.server.api_version,
-    )
+    Response::success(200, &format!("Ok"), &app.config.server.api_version)
 }

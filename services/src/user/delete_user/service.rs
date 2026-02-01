@@ -1,4 +1,4 @@
-use super::DeleteUserError;
+use super::super::UserServiceErrors;
 use crate::{Service, user::UserRepositoryType};
 use domain::models::UserId;
 use repository::RepositoryError;
@@ -12,7 +12,7 @@ impl Service for DeleteUserService {
     type Args = UserId;
     type Out = ();
 
-    async fn run(&self, args: Self::Args) -> Result<Self::Out, DeleteUserError> {
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, UserServiceErrors> {
         let user_id = args;
 
         let user = self.user_repo.delete(user_id).await;
@@ -22,9 +22,9 @@ impl Service for DeleteUserService {
 
             Err(e) => match e {
                 RepositoryError::EntityNotFound(_) => {
-                    return Err(DeleteUserError::UserNotExist);
+                    return Err(UserServiceErrors::UserNotExist);
                 }
-                _ => return Err(DeleteUserError::RepositoryError(e.to_string())),
+                _ => return Err(UserServiceErrors::RepositoryError(e.to_string())),
             },
         }
     }

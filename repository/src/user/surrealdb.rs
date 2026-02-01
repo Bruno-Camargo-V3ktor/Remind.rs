@@ -125,8 +125,10 @@ impl Repository for UserSurrealDbRepository {
         op_user.map(UserEntity::from).ok_or(RepositoryError::Unknow)
     }
 
-    async fn update(&self, new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
+    async fn update(&self, mut new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&new_entity.id.0.to_string()).unwrap();
+        new_entity.updated_at = Utc::now();
+
         let user_query: UserQueryDTO = UserQueryDTO::from(&new_entity);
 
         let op_user: Option<UserResponseDTO> = self

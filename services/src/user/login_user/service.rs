@@ -1,4 +1,4 @@
-use super::LoginUserError;
+use super::super::UserServiceErrors;
 use crate::{Service, user::UserRepositoryType};
 use domain::models::UserId;
 use repository::RepositoryError;
@@ -15,7 +15,7 @@ impl Service for LoginUserService {
     type Args = (String, String);
     type Out = UserId;
 
-    async fn run(&self, args: Self::Args) -> Result<Self::Out, LoginUserError> {
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, UserServiceErrors> {
         let (email, password) = args;
 
         let user = self.user_repo.get_by_email(email.clone()).await;
@@ -28,15 +28,15 @@ impl Service for LoginUserService {
                 if is_valid {
                     return Ok(user.id);
                 } else {
-                    return Err(LoginUserError::InvalidCredentials);
+                    return Err(UserServiceErrors::InvalidCredentials);
                 }
             }
 
             Err(e) => match e {
                 RepositoryError::EntityNotFound(_) => {
-                    return Err(LoginUserError::UserNotExist);
+                    return Err(UserServiceErrors::UserNotExist);
                 }
-                _ => return Err(LoginUserError::RepositoryError(e.to_string())),
+                _ => return Err(UserServiceErrors::RepositoryError(e.to_string())),
             },
         }
     }

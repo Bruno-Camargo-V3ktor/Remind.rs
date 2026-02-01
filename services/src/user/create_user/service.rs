@@ -1,4 +1,4 @@
-use super::CreateUserError;
+use super::super::UserServiceErrors;
 use crate::{Service, user::UserRepositoryType};
 use domain::models::User;
 use dtos::CreateUserDTO;
@@ -15,13 +15,13 @@ impl Service for CreateUserService {
     type Args = CreateUserDTO;
     type Out = User;
 
-    async fn run(&self, args: Self::Args) -> Result<Self::Out, CreateUserError> {
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, UserServiceErrors> {
         let dto = args;
 
         let user_exist = self.user_repo.get_by_email(dto.email.clone()).await.is_ok();
 
         if user_exist {
-            return Err(CreateUserError::EmailRegistered(dto.email.clone()));
+            return Err(UserServiceErrors::EmailRegistered(dto.email.clone()));
         }
 
         match dto.to_user() {
@@ -33,11 +33,11 @@ impl Service for CreateUserService {
                         return Ok(entity);
                     }
 
-                    Err(err) => return Err(CreateUserError::RepositoryError(err.to_string())),
+                    Err(err) => return Err(UserServiceErrors::RepositoryError(err.to_string())),
                 }
             }
 
-            Err(field_erros) => return Err(CreateUserError::FieldsError(field_erros)),
+            Err(field_erros) => return Err(UserServiceErrors::FieldsError(field_erros)),
         }
     }
 }

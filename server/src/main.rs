@@ -6,6 +6,7 @@ use repository::{
 use security::argon2::Argon2Hash;
 use services::{
     CreateUserBuilder, DeleteUserBuilder, LoginUserBuilder, SendEmailBuilder, ServiceBuilder,
+    UpdateUserBuilder,
 };
 use std::{collections::HashMap, sync::Arc};
 
@@ -77,6 +78,14 @@ async fn main() {
         app.add_service(
             DeleteUserBuilder::new()
                 .user_repository(user_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            UpdateUserBuilder::new()
+                .user_repository(user_repo.clone())
+                .password_hash(password_hash.clone())
                 .build(),
         )
         .await;

@@ -12,6 +12,9 @@ pub struct UpdateUserDTO {
     #[validate(length(min = 10, max = 500))]
     pub bio: Option<String>,
 
+    #[validate(length(min = 1, max = 20))]
+    pub password: Option<String>,
+
     pub photo: Option<String>,
 }
 

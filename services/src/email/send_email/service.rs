@@ -14,11 +14,11 @@ pub struct SendEmailService {
 
 #[async_trait::async_trait]
 impl Service for SendEmailService {
-    type Args = (To, String, String, String);
+    type Args = (To, String, String);
     type Out = ();
 
     async fn run(&self, args: Self::Args) -> Result<Self::Out, SendEmailError> {
-        let (to, subject, body_text, body_html) = args;
+        let (to, subject, body) = args;
 
         let email = Message::builder()
             .from(Mailbox::new(
@@ -29,8 +29,7 @@ impl Service for SendEmailService {
             .subject(subject)
             .multipart(
                 lettre::message::MultiPart::alternative()
-                    .singlepart(lettre::message::SinglePart::plain(String::from(&body_text)))
-                    .singlepart(lettre::message::SinglePart::html(String::from(&body_html))),
+                    .singlepart(lettre::message::SinglePart::html(String::from(&body))),
             )
             .unwrap();
 
