@@ -12,6 +12,14 @@ struct ResetPasswordInfo {
     url: String,
 }
 
+#[get("/user")]
+pub async fn authenticated_user(
+    app: web::Data<App>,
+    _auth_user: AuthenticatedUser,
+) -> http::Response {
+    Response::success(200, &"Ok", &app.config.server.api_version)
+}
+
 #[post("/register")]
 pub async fn register_user(
     app: web::Data<App>,
@@ -36,11 +44,8 @@ pub async fn register_user(
 }
 
 #[post("/login")]
-pub async fn login_user(
-    app: web::Data<App>,
-    create_dto: web::Json<LoginUserDTO>,
-) -> http::Response {
-    let dto = create_dto.0;
+pub async fn login_user(app: web::Data<App>, login_dto: web::Json<LoginUserDTO>) -> http::Response {
+    let dto = login_dto.0;
     let service = app.services.get::<LoginUserService>().await.unwrap();
 
     let result = service.run((dto.email, dto.password)).await;
@@ -69,7 +74,7 @@ pub async fn send_email_password(
     match result {
         Ok(u) => {
             let token = UserToken::new(&app.config.security.reset_key, 1, u.id);
-            let _url = info.url.clone();
+            let url = info.url.clone();
 
             let args = (
                 To {
@@ -78,8 +83,8 @@ pub async fn send_email_password(
                 },
                 "Reset Password".to_string(),
                 format!(
-                    "<h3>Click for Reset your Password</h3> <a href=\"#?t={:?}\">Reset Password</a>",
-                    token.0
+                    "<h3>Click for Reset your Password</h3> <a href=\"{}?t={}\">Reset Password</a>",
+                    url, token.0
                 ),
             );
 
@@ -94,12 +99,4 @@ pub async fn send_email_password(
 
         Err(_) => Response::success(200, &(), &app.config.server.api_version),
     }
-}
-
-#[get("/user")]
-pub async fn authenticated_user(
-    app: web::Data<App>,
-    _auth_user: AuthenticatedUser,
-) -> http::Response {
-    Response::success(200, &format!("Ok"), &app.config.server.api_version)
 }
