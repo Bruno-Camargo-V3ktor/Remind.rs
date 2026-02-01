@@ -9,9 +9,11 @@ use std::{
 use tokio::sync::RwLock;
 
 mod email;
+mod file;
 mod user;
 
 pub use email::*;
+pub use file::*;
 pub use user::*;
 
 #[async_trait::async_trait]
