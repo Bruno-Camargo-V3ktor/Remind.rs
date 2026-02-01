@@ -5,8 +5,8 @@ use repository::{
 };
 use security::argon2::Argon2Hash;
 use services::{
-    CreateUserBuilder, DeleteUserBuilder, LoginUserBuilder, SendEmailBuilder, ServiceBuilder,
-    UpdateUserBuilder,
+    CreateUserBuilder, DeleteUserBuilder, FileServiceBuilder, LoginUserBuilder, SendEmailBuilder,
+    ServiceBuilder, UpdateUserBuilder,
 };
 use std::{collections::HashMap, sync::Arc};
 
@@ -46,6 +46,13 @@ async fn main() {
             ("USER_NOT_EXIST".into(), 404),
             ("INVALID_TOKEN".into(), 401),
         ]));
+
+        app.add_service(
+            FileServiceBuilder::new()
+                .base(config.server.storage_dir.clone())
+                .build(),
+        )
+        .await;
 
         app.add_service(
             SendEmailBuilder::new()

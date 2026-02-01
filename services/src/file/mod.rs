@@ -1,9 +1,11 @@
-use std::fs::File;
-
-mod service;
 use serde::Serialize;
-pub use service::*;
+use std::fs::File;
 use thiserror::Error;
+
+mod builder;
+mod service;
+pub use builder::*;
+pub use service::*;
 
 use crate::ServiceError;
 

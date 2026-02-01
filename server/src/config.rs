@@ -12,6 +12,7 @@ pub struct ServerConfig {
     pub workers: usize,
     pub keep_alive_secs: u64,
     pub storage_dir: String,
+    pub public_dir: String,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

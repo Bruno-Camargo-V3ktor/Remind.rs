@@ -93,7 +93,7 @@ impl App {
                 .app_data(app_state.clone())
                 .service(actix_files::Files::new(
                     "/public",
-                    &app_state.config.server.storage_dir,
+                    &app_state.config.server.public_dir,
                 ))
                 .service(
                     web::scope("/api")
