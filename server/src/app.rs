@@ -107,7 +107,8 @@ impl App {
                         .service(
                             web::scope("users")
                                 .service(update_user)
-                                .service(delete_user),
+                                .service(delete_user)
+                                .service(upload_image),
                         ),
                 )
         })

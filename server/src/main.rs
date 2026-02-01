@@ -15,6 +15,7 @@ mod config;
 mod db;
 mod guards;
 mod routers;
+mod utils;
 
 #[actix_web::main]
 async fn main() {
@@ -45,6 +46,7 @@ async fn main() {
             ("INVALID_CREDENTIALS".into(), 401),
             ("USER_NOT_EXIST".into(), 404),
             ("INVALID_TOKEN".into(), 401),
+            ("IO_SERVER_ERROR".into(), 500),
         ]));
 
         app.add_service(

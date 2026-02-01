@@ -1,5 +1,4 @@
 use serde::Serialize;
-use std::fs::File;
 use thiserror::Error;
 
 mod builder;
@@ -22,7 +21,7 @@ pub enum FileAction {
         src: String,
     },
     Save {
-        file: File,
+        bytes: Vec<u8>,
         dst: String,
     },
 }

@@ -19,10 +19,7 @@ impl Service for FileService {
         let mut path_file = self.base.clone();
 
         match args {
-            FileAction::Save { mut file, dst } => {
-                let mut bytes = Vec::new();
-                let _ = file.read_to_end(&mut bytes);
-
+            FileAction::Save { bytes, dst } => {
                 path_file.push(&dst);
                 let mut new_file = File::create_new(path_file)
                     .map_err(|e| FileServiceError::Error(e.to_string()))?;
