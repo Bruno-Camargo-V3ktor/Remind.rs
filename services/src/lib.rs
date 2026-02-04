@@ -10,10 +10,12 @@ use tokio::sync::RwLock;
 
 mod email;
 mod file;
+mod property;
 mod user;
 
 pub use email::*;
 pub use file::*;
+pub use property::*;
 pub use user::*;
 
 #[async_trait::async_trait]
