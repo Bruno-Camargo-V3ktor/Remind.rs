@@ -19,12 +19,9 @@ impl Service for CreatePropertyService {
 
         let is_existed_with_name = self
             .property_repo
-            .list_all_by_user(user_id.clone())
+            .get_by_name(user_id.clone(), dto.name.clone())
             .await
-            .unwrap_or_default()
-            .iter()
-            .find(|(p, _)| p.name == dto.name)
-            .is_some();
+            .is_ok();
 
         if is_existed_with_name {
             return Err(PropertysServiceErrors::PropertyAlreadyExists(dto.name));
