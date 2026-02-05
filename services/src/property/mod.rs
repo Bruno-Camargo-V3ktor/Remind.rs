@@ -1,12 +1,13 @@
+use crate::ServiceError;
 use repository::property::PropertyRepository;
 use serde::Serialize;
 use std::sync::Arc;
 use thiserror::Error;
 
 mod create_property;
+mod delete_property;
 pub use create_property::*;
-
-use crate::ServiceError;
+pub use delete_property::*;
 
 pub type PropertyRepositoryType = Arc<dyn PropertyRepository + 'static + Send + Sync>;
 
@@ -21,6 +22,9 @@ pub enum PropertysServiceErrors {
 
     #[error("repository error, with message: {0}")]
     RepositoryError(String),
+
+    #[error("property not found")]
+    PropertyNotExist,
 }
 
 impl ServiceError for PropertysServiceErrors {
@@ -29,6 +33,7 @@ impl ServiceError for PropertysServiceErrors {
             Self::PropertyAlreadyExists(_) => "PROPERTY_ALREADY_EXISTS".into(),
             Self::FieldsError(_) => "INVALID_FIELDS".into(),
             Self::RepositoryError(_) => "DATABASE_ERROR".into(),
+            Self::PropertyNotExist => "PROPERTY_NOT_EXIST".into(),
         }
     }
 
