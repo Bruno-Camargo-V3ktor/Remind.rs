@@ -143,8 +143,10 @@ impl Repository for PropertySurrealDbRepository {
         op.map(PropertyEntity::from).ok_or(RepositoryError::Unknow)
     }
 
-    async fn update(&self, new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
+    async fn update(&self, mut new_entity: Self::Entity) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&new_entity.0.id.0.to_string()).unwrap();
+
+        new_entity.0.updated_at = Utc::now();
         let query: PropertyQueryDTO = PropertyQueryDTO::from(&new_entity);
 
         let op: Option<PropertyResponseDTO> = self
@@ -187,6 +189,26 @@ impl PropertyRepository for PropertySurrealDbRepository {
 
         match result.take::<Vec<PropertyResponseDTO>>(0) {
             Ok(list) => Ok(list.into_iter().map(PropertyEntity::from).collect()),
+            Err(_) => Err(RepositoryError::Unknow),
+        }
+    }
+
+    async fn get_by_name(&self, user_id: UserId, name: String) -> RepositoryResult<Self::Entity> {
+        let mut result = self
+            .db
+            .query("SELECT * FROM propertys WHERE user_id = $user and name = $name")
+            .bind(("user", user_id))
+            .bind(("name", name.clone()))
+            .await
+            .map_err(|_| RepositoryError::DatabaseConnection)?;
+
+        match result.take::<Option<PropertyResponseDTO>>(0) {
+            Ok(res) => match res {
+                Some(p) => return Ok(PropertyEntity::from(p)),
+                None => Err(RepositoryError::EntityNotFound(format!(
+                    "Property with name: {name}' not found"
+                ))),
+            },
             Err(_) => Err(RepositoryError::Unknow),
         }
     }

@@ -34,7 +34,7 @@ pub enum UserServiceErrors {
     #[error("invalid credentials by User")]
     InvalidCredentials,
 
-    #[error("unknow create user error")]
+    #[error("unknow user service error")]
     Unknown,
 }
 

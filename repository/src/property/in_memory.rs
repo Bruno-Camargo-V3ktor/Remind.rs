@@ -71,4 +71,8 @@ impl PropertyRepository for PropertyInMemoryRepository {
 
         Ok(list)
     }
+
+    async fn get_by_name(&self, _user_id: UserId, _name: String) -> RepositoryResult<Self::Entity> {
+        todo!()
+    }
 }

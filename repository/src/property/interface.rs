@@ -6,4 +6,6 @@ pub type PropertyEntity = (Property, UserId);
 #[async_trait::async_trait]
 pub trait PropertyRepository: Repository<Entity = PropertyEntity, Id = PropertyId> {
     async fn list_all_by_user(&self, user_id: UserId) -> RepositoryResult<Vec<Self::Entity>>;
+
+    async fn get_by_name(&self, user_id: UserId, name: String) -> RepositoryResult<Self::Entity>;
 }

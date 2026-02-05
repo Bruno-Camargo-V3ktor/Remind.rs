@@ -6,8 +6,11 @@ use thiserror::Error;
 
 mod create_property;
 mod delete_property;
+mod update_property;
+
 pub use create_property::*;
 pub use delete_property::*;
+pub use update_property::*;
 
 pub type PropertyRepositoryType = Arc<dyn PropertyRepository + 'static + Send + Sync>;
 
@@ -25,6 +28,9 @@ pub enum PropertysServiceErrors {
 
     #[error("property not found")]
     PropertyNotExist,
+
+    #[error("unknow property service error")]
+    Unknown,
 }
 
 impl ServiceError for PropertysServiceErrors {
@@ -34,6 +40,7 @@ impl ServiceError for PropertysServiceErrors {
             Self::FieldsError(_) => "INVALID_FIELDS".into(),
             Self::RepositoryError(_) => "DATABASE_ERROR".into(),
             Self::PropertyNotExist => "PROPERTY_NOT_EXIST".into(),
+            Self::Unknown => "INTERNAL_SERVER_ERROR".into(),
         }
     }
 
