@@ -15,12 +15,20 @@ pub type PropertyRepositoryType = Arc<dyn PropertyRepository + 'static + Send + 
 pub enum PropertysServiceErrors {
     #[error("Property already exists with name {0}")]
     PropertyAlreadyExists(String),
+
+    #[error("invalid field(s): {0:#?}")]
+    FieldsError(Vec<String>),
+
+    #[error("repository error, with message: {0}")]
+    RepositoryError(String),
 }
 
 impl ServiceError for PropertysServiceErrors {
     fn code(&self) -> String {
         match self {
             Self::PropertyAlreadyExists(_) => "PROPERTY_ALREADY_EXISTS".into(),
+            Self::FieldsError(_) => "INVALID_FIELDS".into(),
+            Self::RepositoryError(_) => "DATABASE_ERROR".into(),
         }
     }
 
