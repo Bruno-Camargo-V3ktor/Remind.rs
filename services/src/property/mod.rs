@@ -29,6 +29,6 @@ impl ServiceError for PropertysServiceErrors {
     }
 
     fn description(&self) -> String {
-        t
+        self.to_string().trim().to_string()
     }
 }
