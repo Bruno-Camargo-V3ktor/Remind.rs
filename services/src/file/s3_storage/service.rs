@@ -100,8 +100,13 @@ impl Service for S3StorageService {
             }
 
             FileAction::Delete { src } => {
-                path_file.push(&src);
-                fs::remove_file(path_file).map_err(|e| FileServiceError::Error(e.to_string()))?;
+                let (bucket, key) = src.split_once("/").unwrap_or(("", ""));
+
+                let res = client.delete_object().bucket(bucket).key(key).send().await;
+
+                if let Err(e) = res {
+                    return Err(FileServiceError::Error(e.to_string()));
+                }
 
                 Ok(None)
             }
