@@ -58,7 +58,29 @@ impl Service for S3StorageService {
             }
 
             FileAction::Open { path } => {
-                todo!()
+                let (bucket, key) = path.split_once("/").unwrap_or(("", ""));
+
+                let res = client.get_object().bucket(bucket).key(key).send().await;
+
+                if let Err(e) = res {
+                    return Err(FileServiceError::Error(e.to_string()));
+                }
+
+                let data = res.unwrap().body.collect().await.unwrap();
+                let bytes = data.into_bytes().into_iter().collect::<Vec<u8>>();
+
+                let file_path = format!(
+                    "{}/{}_{}",
+                    self.temp_files_path,
+                    bucket,
+                    key.split("/").last().unwrap_or("")
+                );
+                let temp_file = TempFile::from_bytes(bytes, file_path);
+
+                match temp_file {
+                    Ok(file) => Ok(Some(file)),
+                    Err(e) => Err(FileServiceError::Error(e.to_string())),
+                }
             }
 
             FileAction::Move { src, dst, copy } => {
