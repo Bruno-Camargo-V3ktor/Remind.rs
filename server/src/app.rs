@@ -104,6 +104,12 @@ impl App {
                             .service(update_user)
                             .service(delete_user)
                             .service(upload_image),
+                    )
+                    .service(
+                        web::scope("notes")
+                            .service(create_note)
+                            .service(update_note)
+                            .service(delete_note),
                     ),
             );
 

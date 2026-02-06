@@ -58,7 +58,7 @@ pub async fn update_user(
     let result = service.run((user_id, update_dto)).await;
 
     match result {
-        Ok(u) => http::Response::success(200, &u, &app.config.server.api_version),
+        Ok(_) => http::Response::success(200, &(), &app.config.server.api_version),
 
         Err(err) => {
             let status_code = app.error_code(err.code());

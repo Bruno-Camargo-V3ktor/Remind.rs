@@ -16,7 +16,8 @@ impl Default for UserId {
 impl FromStr for UserId {
     type Err = ();
     fn from_str(id: &str) -> Result<Self, Self::Err> {
-        Ok(Self(Uuid::from_str(id).unwrap()))
+        let uuid = Uuid::from_str(id).map_err(|_| ())?;
+        Ok(UserId(uuid))
     }
 }
 

@@ -16,7 +16,8 @@ impl FromStr for PropertyId {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(PropertyId(Uuid::from_str(s).unwrap()))
+        let uuid = Uuid::from_str(s).map_err(|_| ())?;
+        Ok(PropertyId(uuid))
     }
 }
 
