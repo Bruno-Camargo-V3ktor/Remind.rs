@@ -1,3 +1,5 @@
+use std::fs;
+
 use crate::{S3StorageService, ServiceBuilder};
 
 #[derive(Default)]
@@ -58,6 +60,11 @@ impl ServiceBuilder for S3StorageBuilder {
         let provide = self.provide.expect("");
         let region = self.region.expect("");
         let temp_files_path = self.temp_files_path.expect("");
+
+        if fs::metadata(&temp_files_path).is_ok() {
+            let _ = fs::remove_dir_all(&temp_files_path);
+        }
+        let _ = fs::create_dir(&temp_files_path);
 
         S3StorageService {
             url,
