@@ -74,4 +74,12 @@ impl NoteRepository for NoteInMemoryRepository {
 
         Ok(list)
     }
+
+    async fn get_by_title(
+        &self,
+        _user_id: UserId,
+        _title: String,
+    ) -> RepositoryResult<Self::Entity> {
+        todo!()
+    }
 }

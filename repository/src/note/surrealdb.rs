@@ -206,4 +206,24 @@ impl NoteRepository for NoteSurrealDbRepository {
             Err(_) => Err(RepositoryError::Unknow),
         }
     }
+
+    async fn get_by_title(&self, user_id: UserId, title: String) -> RepositoryResult<Self::Entity> {
+        let mut result = self
+            .db
+            .query("SELECT * FROM propertys WHERE user_id = $user and title = $title")
+            .bind(("user", user_id))
+            .bind(("title", title.clone()))
+            .await
+            .map_err(|_| RepositoryError::DatabaseConnection)?;
+
+        match result.take::<Option<NoteResponseDTO>>(0) {
+            Ok(res) => match res {
+                Some(p) => return Ok(NoteEntity::from(p)),
+                None => Err(RepositoryError::EntityNotFound(format!(
+                    "Note with title: '{title}' not found"
+                ))),
+            },
+            Err(_) => Err(RepositoryError::Unknow),
+        }
+    }
 }

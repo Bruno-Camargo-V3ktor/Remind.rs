@@ -10,11 +10,13 @@ use tokio::sync::RwLock;
 
 mod email;
 mod file;
+mod note;
 mod property;
 mod user;
 
 pub use email::*;
 pub use file::*;
+pub use note::*;
 pub use property::*;
 pub use user::*;
 
