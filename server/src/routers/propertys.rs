@@ -5,19 +5,21 @@ use actix_web::{
     delete, post, put,
     web::{self, Json},
 };
-use domain::models::NoteId;
-use dtos::{CreateNoteDTO, UpdateNoteDTO};
-use services::{CreateNoteService, DeleteNoteService, Service, ServiceError, UpdateNoteService};
+use domain::models::PropertyId;
+use dtos::{CreatePropertyDTO, UpdatePropertyDTO};
+use services::{
+    CreatePropertyService, DeletePropertyService, Service, ServiceError, UpdatePropertyService,
+};
 
 #[post("/")]
-pub async fn create_note(
+pub async fn create_property(
     app: web::Data<App>,
     auth: AuthenticatedUser,
-    create_note: Json<CreateNoteDTO>,
+    create_property: Json<CreatePropertyDTO>,
 ) -> http::Response {
     let user_id = auth.get_id();
-    let dto = create_note.0;
-    let service = app.services.get::<CreateNoteService>().await.unwrap();
+    let dto = create_property.0;
+    let service = app.services.get::<CreatePropertyService>().await.unwrap();
 
     let result = service.run((user_id, dto)).await;
 
@@ -31,18 +33,18 @@ pub async fn create_note(
     }
 }
 
-#[put("/{note_id_str}")]
-pub async fn update_note(
+#[put("/{property_id_str}")]
+pub async fn update_property(
     app: web::Data<App>,
     auth: AuthenticatedUser,
-    update_note: Json<UpdateNoteDTO>,
-    note_id_str: String,
+    update_property: Json<UpdatePropertyDTO>,
+    property_id_str: String,
 ) -> http::Response {
     let user_id = auth.get_id();
-    let dto = update_note.0;
-    let service = app.services.get::<UpdateNoteService>().await.unwrap();
+    let dto = update_property.0;
+    let service = app.services.get::<UpdatePropertyService>().await.unwrap();
 
-    let note_id = match NoteId::from_str(&note_id_str) {
+    let property_id = match PropertyId::from_str(&property_id_str) {
         Ok(id) => id,
         Err(_) => {
             return http::Response::error(
@@ -54,7 +56,7 @@ pub async fn update_note(
         }
     };
 
-    let result = service.run((user_id, note_id, dto)).await;
+    let result = service.run((user_id, property_id, dto)).await;
 
     match result {
         Ok(n) => http::Response::success(200, &n, &app.config.server.api_version),
@@ -66,15 +68,15 @@ pub async fn update_note(
     }
 }
 
-#[delete("/{note_id_str}")]
-pub async fn delete_note(
+#[delete("/{property_id_str}")]
+pub async fn delete_property(
     app: web::Data<App>,
     _auth: AuthenticatedUser,
-    note_id_str: String,
+    property_id_str: String,
 ) -> http::Response {
-    let service = app.services.get::<DeleteNoteService>().await.unwrap();
+    let service = app.services.get::<DeletePropertyService>().await.unwrap();
 
-    let note_id = match NoteId::from_str(&note_id_str) {
+    let property_id = match PropertyId::from_str(&property_id_str) {
         Ok(id) => id,
         Err(_) => {
             return http::Response::error(
@@ -86,7 +88,7 @@ pub async fn delete_note(
         }
     };
 
-    let result = service.run(note_id).await;
+    let result = service.run(property_id).await;
 
     match result {
         Ok(n) => http::Response::success(200, &n, &app.config.server.api_version),
