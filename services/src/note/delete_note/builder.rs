@@ -1,30 +1,28 @@
-use crate::{DeletePropertyService, ServiceBuilder};
+use crate::{DeleteNoteService, ServiceBuilder};
 
-use super::super::PropertyRepositoryType;
+use super::super::NoteRepositoryType;
 
-pub struct DeletePropertyBuilder {
-    repo_property: Option<PropertyRepositoryType>,
+pub struct DeleteNoteBuilder {
+    note_repo: Option<NoteRepositoryType>,
 }
 
-impl DeletePropertyBuilder {
-    pub fn repo_property(mut self, repo: PropertyRepositoryType) -> Self {
-        self.repo_property = Some(repo);
+impl DeleteNoteBuilder {
+    pub fn note_repo(mut self, repo: NoteRepositoryType) -> Self {
+        self.note_repo = Some(repo);
         self
     }
 }
 
-impl ServiceBuilder for DeletePropertyBuilder {
-    type S = DeletePropertyService;
+impl ServiceBuilder for DeleteNoteBuilder {
+    type S = DeleteNoteService;
 
     fn new() -> Self {
-        Self {
-            repo_property: None,
-        }
+        Self { note_repo: None }
     }
 
     fn build(self) -> Self::S {
         Self::S {
-            property_repo: self.repo_property.expect(""),
+            note_repo: self.note_repo.expect(""),
         }
     }
 }
