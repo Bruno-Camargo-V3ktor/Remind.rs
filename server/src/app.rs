@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
-use crate::{config::ConfigApp, routers::*};
+use crate::routers::*;
 use actix_web::{HttpServer, web};
+use config::ConfigApp;
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
 use security::hash::PasswordHash;
 use services::{Service, ServiceManager};

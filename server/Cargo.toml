@@ -8,10 +8,10 @@ actix-files = "0.6.9"
 actix-multipart = "0.7.2"
 actix-web = { workspace = true }
 chrono = { workspace = true }
+config = { workspace = true }
 domain = { workspace = true }
 dotenv = "0.15.0"
 dtos = { workspace = true }
-figment = { version = "0.10.19", features = ["env", "json"] }
 futures-util = "0.3.31"
 http = { path = "../http/", features = ["actix-web"] }
 repository = { workspace = true }

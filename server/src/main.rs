@@ -1,4 +1,5 @@
-use crate::{app::App, config::load_config, db::connection_db};
+use crate::{app::App, db::connection_db};
+use config::load_config;
 use repository::{
     note::NoteSurrealDbRepository, property::PropertySurrealDbRepository,
     user::UserSurrealDbRepository,
@@ -7,12 +8,12 @@ use security::argon2::Argon2Hash;
 use services::{
     CreateNoteBuilder, CreatePropertyBuilder, CreateUserBuilder, DeleteNoteBuilder,
     DeletePropertyBuilder, DeleteUserBuilder, LocalStorageBuilder, LoginUserBuilder,
-    SendEmailBuilder, ServiceBuilder, UpdateNoteBuilder, UpdatePropertyBuilder, UpdateUserBuilder,
+    S3StorageBuilder, SendEmailBuilder, ServiceBuilder, UpdateNoteBuilder, UpdatePropertyBuilder,
+    UpdateUserBuilder,
 };
 use std::{collections::HashMap, sync::Arc};
 
 mod app;
-mod config;
 mod db;
 mod guards;
 mod routers;
@@ -25,6 +26,20 @@ async fn main() {
 
     let app = App::new(|mut app| async {
         let config = load_config();
+
+        if let Some(config) = &config.s3_storage {
+            app.add_service(
+                S3StorageBuilder::new()
+                    .url(&config.url)
+                    .access_key_id(&config.access_key_id)
+                    .access_key_secret(&config.access_key_secret)
+                    .provide(&config.provide)
+                    .region(&config.region)
+                    .temp_files_path(&config.temp_files_path)
+                    .build(),
+            )
+            .await;
+        }
 
         let password_hash = Arc::new(Argon2Hash::default());
 

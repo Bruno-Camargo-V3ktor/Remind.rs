@@ -37,7 +37,7 @@ impl Service for S3StorageService {
         match args {
             FileAction::Save { bytes, dst } => {
                 let (bucket, key) = dst.split_once("/").unwrap_or(("", ""));
-                let content_type = content_type(&key);
+                let content_type = content_type(key);
 
                 let body = ByteStream::from(bytes);
 

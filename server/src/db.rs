@@ -1,4 +1,4 @@
-use crate::config::load_config;
+use config::load_config;
 use std::sync::Arc;
 use surrealdb::{Surreal, engine::any::Any, opt::auth::Root};
 use surrealdb_migrations::MigrationRunner;

@@ -27,7 +27,7 @@ pub enum FileAction {
 }
 
 fn content_type(key: &str) -> &str {
-    let extension = key.split('.').last().unwrap_or("");
+    let extension = key.split('.').next_back().unwrap_or("");
 
     match extension.to_lowercase().as_str() {
         "jpg" | "jpeg" => "image/jpeg",
