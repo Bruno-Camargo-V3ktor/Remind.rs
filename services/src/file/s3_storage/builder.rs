@@ -7,6 +7,7 @@ pub struct S3StorageBuilder {
     access_key_secret: Option<String>,
     provide: Option<String>,
     region: Option<String>,
+    temp_files_path: Option<String>,
 }
 
 impl S3StorageBuilder {
@@ -34,6 +35,11 @@ impl S3StorageBuilder {
         self.region = Some(region.into());
         self
     }
+
+    pub fn temp_files_path(mut self, temp_files_path: impl Into<String>) -> Self {
+        self.temp_files_path = Some(temp_files_path.into());
+        self
+    }
 }
 
 impl ServiceBuilder for S3StorageBuilder {
@@ -51,6 +57,7 @@ impl ServiceBuilder for S3StorageBuilder {
         let access_key_secret = self.access_key_secret.expect("");
         let provide = self.provide.expect("");
         let region = self.region.expect("");
+        let temp_files_path = self.temp_files_path.expect("");
 
         S3StorageService {
             url,
@@ -58,6 +65,7 @@ impl ServiceBuilder for S3StorageBuilder {
             access_key_secret,
             provide,
             region,
+            temp_files_path,
         }
     }
 }
