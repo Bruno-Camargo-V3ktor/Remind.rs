@@ -2,12 +2,31 @@ use std::str::FromStr;
 
 use crate::{app::App, guards::AuthenticatedUser};
 use actix_web::{
-    delete, post, put,
+    delete, get, post, put,
     web::{self, Json},
 };
 use domain::models::NoteId;
 use dtos::{CreateNoteDTO, UpdateNoteDTO};
-use services::{CreateNoteService, DeleteNoteService, Service, ServiceError, UpdateNoteService};
+use services::{
+    CreateNoteService, DeleteNoteService, ListNoteService, Service, ServiceError, UpdateNoteService,
+};
+
+#[get("/")]
+pub async fn list_notes(app: web::Data<App>, auth: AuthenticatedUser) -> http::Response {
+    let user_id = auth.get_id();
+    let service = app.services.get::<ListNoteService>().await.unwrap();
+
+    let result = service.run(user_id).await;
+
+    match result {
+        Ok(list) => http::Response::success(200, &list, &app.config.server.api_version),
+
+        Err(err) => {
+            let status_code = app.error_code(err.code());
+            http::Response::error(status_code, err.code(), err.description(), &err)
+        }
+    }
+}
 
 #[post("/")]
 pub async fn create_note(

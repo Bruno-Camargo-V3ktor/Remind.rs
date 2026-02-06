@@ -7,9 +7,9 @@ use repository::{
 use security::argon2::Argon2Hash;
 use services::{
     CreateNoteBuilder, CreatePropertyBuilder, CreateUserBuilder, DeleteNoteBuilder,
-    DeletePropertyBuilder, DeleteUserBuilder, LocalStorageBuilder, LoginUserBuilder,
-    S3StorageBuilder, SendEmailBuilder, ServiceBuilder, UpdateNoteBuilder, UpdatePropertyBuilder,
-    UpdateUserBuilder,
+    DeletePropertyBuilder, DeleteUserBuilder, ListNoteBuilder, ListPropertyBuilder,
+    LocalStorageBuilder, LoginUserBuilder, S3StorageBuilder, SendEmailBuilder, ServiceBuilder,
+    UpdateNoteBuilder, UpdatePropertyBuilder, UpdateUserBuilder,
 };
 use std::{collections::HashMap, sync::Arc};
 
@@ -143,6 +143,13 @@ async fn main() {
         .await;
 
         app.add_service(
+            ListPropertyBuilder::new()
+                .repo_property(property_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
             CreateNoteBuilder::new()
                 .note_repo(note_repo.clone())
                 .build(),
@@ -162,6 +169,9 @@ async fn main() {
                 .build(),
         )
         .await;
+
+        app.add_service(ListNoteBuilder::new().note_repo(note_repo.clone()).build())
+            .await;
 
         app.config(config);
         app.build()

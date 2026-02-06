@@ -38,7 +38,7 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 
 * [x] **Motor do Backend:** Configurar o servidor Actix e a injeção de dependência via `AppState`.
 * [x] **Guardas de Autenticação:** Criar o Middleware de JWT para proteger as rotas sensíveis.
-* [ ] **Handlers de CRUD:** Implementar os endpoints da API com validação rigorosa.
+* [x] **Handlers de CRUD:** Implementar os endpoints da API com validação rigorosa.
 
 ### 🖥️ Fase 4: O Rosto (Interface Dioxus)
 
@@ -57,6 +57,7 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 | **Auth** | `POST` | `/api/auth/reset-password` | ❌ |
 | --- | --- | --- | --- |
 | **Users** | `PUT` | `/api/users` | ✅ |
+| **Users** | `POST` | `/api/users/image` | ✅ |
 | **Users** | `DELETE` | `/api/users` | ✅ |
 | --- | --- | --- | --- |
 | **Notes** | `GET` | `/api/notes` | ✅ |

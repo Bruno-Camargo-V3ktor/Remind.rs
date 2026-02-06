@@ -107,12 +107,14 @@ impl App {
                     )
                     .service(
                         web::scope("notes")
+                            .service(list_notes)
                             .service(create_note)
                             .service(update_note)
                             .service(delete_note),
                     )
                     .service(
                         web::scope("propertys")
+                            .service(list_propertys)
                             .service(create_property)
                             .service(update_property)
                             .service(delete_property),
