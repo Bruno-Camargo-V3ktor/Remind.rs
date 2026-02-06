@@ -11,8 +11,12 @@ pub struct ServerConfig {
     pub hostname: String,
     pub workers: usize,
     pub keep_alive_secs: u64,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct LocalStorge {
     pub storage_dir: String,
-    pub public_dir: String,
+    pub public_dir: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -44,6 +48,7 @@ pub struct ConfigApp {
     pub security: SecurityConfig,
     pub email: EmailConfig,
     pub surreal_db: Option<SurrealDbConfig>,
+    pub local_storage: LocalStorge,
 }
 
 pub fn load_config() -> ConfigApp {

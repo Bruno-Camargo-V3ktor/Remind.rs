@@ -1,10 +1,8 @@
 use serde::Serialize;
 use thiserror::Error;
 
-mod builder;
-mod service;
-pub use builder::*;
-pub use service::*;
+mod local_storage;
+pub use local_storage::*;
 
 use crate::ServiceError;
 

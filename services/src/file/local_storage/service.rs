@@ -1,4 +1,4 @@
-use super::{FileAction, FileServiceError};
+use super::super::{FileAction, FileServiceError};
 use crate::Service;
 use std::{
     fs::{self, File},
@@ -6,12 +6,12 @@ use std::{
     path::PathBuf,
 };
 
-pub struct FileService {
+pub struct LocalStorageService {
     pub base: PathBuf,
 }
 
 #[async_trait::async_trait]
-impl Service for FileService {
+impl Service for LocalStorageService {
     type Args = FileAction;
     type Out = Option<File>;
 

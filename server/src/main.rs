@@ -5,8 +5,9 @@ use repository::{
 };
 use security::argon2::Argon2Hash;
 use services::{
-    CreateUserBuilder, DeleteUserBuilder, FileServiceBuilder, LoginUserBuilder, SendEmailBuilder,
-    ServiceBuilder, UpdateUserBuilder,
+    CreateNoteBuilder, CreatePropertyBuilder, CreateUserBuilder, DeleteNoteBuilder,
+    DeletePropertyBuilder, DeleteUserBuilder, LocalStorageBuilder, LoginUserBuilder,
+    SendEmailBuilder, ServiceBuilder, UpdateNoteBuilder, UpdatePropertyBuilder, UpdateUserBuilder,
 };
 use std::{collections::HashMap, sync::Arc};
 
@@ -39,19 +40,23 @@ async fn main() {
 
         app.add_table_errors_code(HashMap::from([
             ("EMAIL_ALREADY_EXISTS".into(), 409),
+            ("NOTE_ALREADY_EXISTS".into(), 409),
+            ("PROPERTY_ALREADY_EXISTS".into(), 409),
             ("INVALID_FIELDS".into(), 400),
             ("DATABASE_ERROR".into(), 500),
             ("SEND_EMAIL_FAIL".into(), 500),
             ("INTERNAL_SERVER_ERROR".into(), 500),
             ("INVALID_CREDENTIALS".into(), 401),
             ("USER_NOT_EXIST".into(), 404),
+            ("PROPERTY_NOT_EXIST".into(), 404),
+            ("NOTE_NOT_EXIST".into(), 404),
             ("INVALID_TOKEN".into(), 401),
             ("IO_SERVER_ERROR".into(), 500),
         ]));
 
         app.add_service(
-            FileServiceBuilder::new()
-                .base(config.server.storage_dir.clone())
+            LocalStorageBuilder::new()
+                .base(config.local_storage.storage_dir.clone())
                 .build(),
         )
         .await;
@@ -95,6 +100,48 @@ async fn main() {
             UpdateUserBuilder::new()
                 .user_repository(user_repo.clone())
                 .password_hash(password_hash.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            CreatePropertyBuilder::new()
+                .repo_property(property_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            UpdatePropertyBuilder::new()
+                .repo_property(property_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            DeletePropertyBuilder::new()
+                .repo_property(property_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            CreateNoteBuilder::new()
+                .note_repo(note_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            UpdateNoteBuilder::new()
+                .note_repo(note_repo.clone())
+                .build(),
+        )
+        .await;
+
+        app.add_service(
+            DeleteNoteBuilder::new()
+                .note_repo(note_repo.clone())
                 .build(),
         )
         .await;

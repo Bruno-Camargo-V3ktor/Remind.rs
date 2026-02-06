@@ -89,28 +89,28 @@ impl App {
         let app_state = web::Data::new(self.clone());
 
         HttpServer::new(move || {
-            actix_web::App::new()
-                .app_data(app_state.clone())
-                .service(actix_files::Files::new(
-                    "/public",
-                    &app_state.config.server.public_dir,
-                ))
-                .service(
-                    web::scope("/api")
-                        .service(
-                            web::scope("/auth")
-                                .service(register_user)
-                                .service(login_user)
-                                .service(send_email_password)
-                                .service(authenticated_user),
-                        )
-                        .service(
-                            web::scope("users")
-                                .service(update_user)
-                                .service(delete_user)
-                                .service(upload_image),
-                        ),
-                )
+            let mut actix_app = actix_web::App::new().app_data(app_state.clone()).service(
+                web::scope("/api")
+                    .service(
+                        web::scope("/auth")
+                            .service(register_user)
+                            .service(login_user)
+                            .service(send_email_password)
+                            .service(authenticated_user),
+                    )
+                    .service(
+                        web::scope("users")
+                            .service(update_user)
+                            .service(delete_user)
+                            .service(upload_image),
+                    ),
+            );
+
+            if let Some(public_dir) = &app_state.config.local_storage.public_dir {
+                actix_app = actix_app.service(actix_files::Files::new("/public", public_dir));
+            }
+
+            actix_app
         })
         .server_hostname(&self.config.server.hostname)
         .workers(self.config.server.workers)

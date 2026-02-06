@@ -1,26 +1,26 @@
-use crate::{FileService, ServiceBuilder};
+use crate::{LocalStorageService, ServiceBuilder};
 use std::path::PathBuf;
 
-pub struct FileServiceBuilder {
+pub struct LocalStorageBuilder {
     base: Option<PathBuf>,
 }
 
-impl FileServiceBuilder {
+impl LocalStorageBuilder {
     pub fn base(mut self, base: impl Into<PathBuf>) -> Self {
         self.base = Some(base.into());
         self
     }
 }
 
-impl ServiceBuilder for FileServiceBuilder {
-    type S = FileService;
+impl ServiceBuilder for LocalStorageBuilder {
+    type S = LocalStorageService;
 
     fn new() -> Self {
         Self { base: None }
     }
 
     fn build(self) -> Self::S {
-        FileService {
+        LocalStorageService {
             base: self.base.expect(""),
         }
     }

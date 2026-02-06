@@ -11,7 +11,7 @@ use actix_web::{
 use chrono::{Duration, Utc};
 use dtos::UpdateUserDTO;
 use services::{
-    DeleteUserService, FileAction, FileService, Service, ServiceError, UpdateUserService,
+    DeleteUserService, FileAction, LocalStorageService, Service, ServiceError, UpdateUserService,
 };
 
 const MAX_IMAGE_SIZE: usize = 1024 * 1500;
@@ -124,7 +124,7 @@ pub async fn upload_image(
         );
     }
 
-    let file_service = app.services.get::<FileService>().await.unwrap();
+    let file_service = app.services.get::<LocalStorageService>().await.unwrap();
 
     let result = file_service
         .run(FileAction::Save {
