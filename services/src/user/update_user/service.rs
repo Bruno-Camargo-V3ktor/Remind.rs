@@ -19,10 +19,10 @@ impl Service for UpdateUserService {
     async fn run(&self, args: Self::Args) -> Result<Self::Out, UserServiceErrors> {
         let (user_id, mut dto) = args;
 
-        let user = self.user_repo.get_by_id(user_id.clone()).await;
+        let res = self.user_repo.get_by_id(user_id.clone()).await;
 
-        match user {
-            Ok(mut user) => {
+        match res {
+            Ok(user) => {
                 if let Some(new_email) = &dto.email {
                     let res = self.user_repo.get_by_email(new_email.clone()).await;
                     if res.is_ok() {
@@ -34,11 +34,14 @@ impl Service for UpdateUserService {
                     dto.password = Some(self.password_hash.generate(&new_password));
                 }
 
-                merge_user(&mut user, &mut dto);
+                let new_user = match dto.to_user(&user) {
+                    Ok(n) => n,
+                    Err(e) => return Err(UserServiceErrors::FieldsError(e)),
+                };
 
                 let res = self
                     .user_repo
-                    .update(user)
+                    .update(new_user)
                     .await
                     .map_err(|e| UserServiceErrors::RepositoryError(e.to_string()));
 
@@ -53,12 +56,4 @@ impl Service for UpdateUserService {
             },
         }
     }
-}
-
-fn merge_user(user: &mut User, dto: &mut UpdateUserDTO) {
-    user.name = dto.name.clone().unwrap_or(user.name.clone());
-    user.email = dto.email.clone().unwrap_or(user.email.clone());
-    user.password = dto.password.clone().unwrap_or(user.password.clone());
-    user.bio = dto.bio.clone().unwrap_or(user.bio.clone());
-    user.photo_url = dto.photo.clone().unwrap_or(user.photo_url.clone());
 }
