@@ -13,7 +13,7 @@ use surrealdb::{RecordId, Surreal, Uuid, engine::any::Any};
 pub struct NoteQueryDTO {
     pub title: String,
     pub content: String,
-    pub color: Option<u32>,
+    pub color: u32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub user_id: RecordId,
@@ -55,7 +55,7 @@ pub struct NoteResponseDTO {
     pub id: RecordId,
     pub title: String,
     pub content: String,
-    pub color: Option<u32>,
+    pub color: u32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub user_id: RecordId,

@@ -14,6 +14,7 @@ impl Service for CreateNoteService {
 
     async fn run(&self, args: Self::Args) -> Result<Self::Out, NoteServiceErrors> {
         let (user_id, dto) = args;
+        let propertys = dto.propertys.clone();
 
         let is_existed_with_title = self
             .note_repo
@@ -26,7 +27,7 @@ impl Service for CreateNoteService {
         }
 
         match dto.to_note() {
-            Ok(n) => match self.note_repo.create((n, user_id, vec![])).await {
+            Ok(note) => match self.note_repo.create((note, user_id, propertys)).await {
                 Ok(entity) => return Ok(entity.0),
 
                 Err(err) => return Err(NoteServiceErrors::RepositoryError(err.to_string())),

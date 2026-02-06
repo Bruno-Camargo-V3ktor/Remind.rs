@@ -26,18 +26,18 @@ pub struct Note {
     pub id: NoteId,
     pub title: String,
     pub content: String,
-    pub color: Option<u32>,
+    pub color: u32,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
 impl Note {
-    pub fn new(title: impl Into<String>, color: &Option<u32>) -> Self {
+    pub fn new(title: impl Into<String>, color: u32) -> Self {
         Self {
             id: NoteId::default(),
             title: title.into(),
             content: String::new(),
-            color: *color,
+            color,
             created_at: Utc::now(),
             updated_at: Utc::now(),
         }

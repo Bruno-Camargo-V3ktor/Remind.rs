@@ -1,57 +1,60 @@
-use super::super::PropertyRepositoryType;
-use crate::{PropertysServiceErrors, Service};
-use domain::models::{Property, PropertyId, UserId};
-use dtos::UpdatePropertyDTO;
+use super::super::NoteRepositoryType;
+use crate::{NoteServiceErrors, Service};
+use domain::models::{Note, NoteId, UserId};
+use dtos::UpdateNoteDTO;
 use repository::RepositoryError;
 
-pub struct UpdatePropertyService {
-    pub property_repo: PropertyRepositoryType,
+pub struct UpdateNoteService {
+    pub note_repo: NoteRepositoryType,
 }
 
 #[async_trait::async_trait]
-impl Service for UpdatePropertyService {
-    type Args = (UserId, PropertyId, UpdatePropertyDTO);
-    type Out = Property;
+impl Service for UpdateNoteService {
+    type Args = (UserId, NoteId, UpdateNoteDTO);
+    type Out = Note;
 
-    async fn run(&self, args: Self::Args) -> Result<Self::Out, PropertysServiceErrors> {
-        let (user_id, property_id, dto) = args;
+    async fn run(&self, args: Self::Args) -> Result<Self::Out, NoteServiceErrors> {
+        let (user_id, note_id, dto) = args;
+        let propertys = dto.propertys.clone();
 
-        if dto.name.is_some() {
+        if dto.title.is_some() {
             let is_existed = self
-                .property_repo
-                .get_by_name(user_id.clone(), dto.name.clone().unwrap())
+                .note_repo
+                .get_by_title(user_id.clone(), dto.title.clone().unwrap())
                 .await
                 .is_ok();
 
             if is_existed {
-                return Err(PropertysServiceErrors::PropertyAlreadyExists(
-                    dto.name.unwrap(),
-                ));
+                return Err(NoteServiceErrors::NoteAlreadyExists(dto.title.unwrap()));
             }
         }
 
-        let new_property = match self.property_repo.get_by_id(property_id).await {
-            Ok(property) => match dto.to_property(&property.0) {
-                Ok(p) => p,
-                Err(e) => return Err(PropertysServiceErrors::FieldsError(e)),
+        let mut new_property = match self.note_repo.get_by_id(note_id).await {
+            Ok(property) => match dto.to_note(&property.0) {
+                Ok(p) => (p, property.1, property.2),
+                Err(e) => return Err(NoteServiceErrors::FieldsError(e)),
             },
 
             Err(err) => match err {
                 RepositoryError::EntityNotFound(_) => {
-                    return Err(PropertysServiceErrors::PropertyNotExist);
+                    return Err(NoteServiceErrors::NoteNotExist);
                 }
-                _ => return Err(PropertysServiceErrors::RepositoryError(err.to_string())),
+                _ => return Err(NoteServiceErrors::RepositoryError(err.to_string())),
             },
         };
 
-        match self.property_repo.update((new_property, user_id)).await {
+        if let Some(propertys) = propertys {
+            new_property.2 = propertys;
+        }
+
+        match self.note_repo.update(new_property).await {
             Ok(entity) => return Ok(entity.0),
 
             Err(err) => match err {
                 RepositoryError::EntityNotFound(_) => {
-                    return Err(PropertysServiceErrors::PropertyNotExist);
+                    return Err(NoteServiceErrors::NoteNotExist);
                 }
-                _ => return Err(PropertysServiceErrors::RepositoryError(err.to_string())),
+                _ => return Err(NoteServiceErrors::RepositoryError(err.to_string())),
             },
         }
     }

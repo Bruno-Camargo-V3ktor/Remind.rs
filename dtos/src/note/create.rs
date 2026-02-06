@@ -1,4 +1,4 @@
-use domain::models::Note;
+use domain::models::{Note, PropertyId};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -8,16 +8,14 @@ use crate::is_valid;
 pub struct CreateNoteDTO {
     #[validate(length(min = 1, max = 50))]
     pub title: String,
-
-    pub image: Option<String>,
-
-    pub color: Option<u32>,
+    pub color: u32,
+    pub propertys: Vec<PropertyId>,
 }
 
 impl CreateNoteDTO {
     pub fn to_note(&self) -> Result<Note, Vec<String>> {
         match is_valid(self) {
-            Ok(_) => Ok(Note::new(&self.title, &self.color)),
+            Ok(_) => Ok(Note::new(&self.title, self.color)),
 
             Err(err) => Err(err),
         }

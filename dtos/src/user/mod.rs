@@ -1,7 +1,7 @@
 mod create;
 mod login;
-mod udpdate;
+mod update;
 
 pub use create::*;
 pub use login::*;
-pub use udpdate::*;
+pub use update::*;

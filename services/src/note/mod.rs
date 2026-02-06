@@ -6,11 +6,11 @@ use thiserror::Error;
 
 mod create_note;
 mod delete_note;
-//mod update_note;
+mod update_note;
 
 pub use create_note::*;
 pub use delete_note::*;
-//pub use update_note::*;
+pub use update_note::*;
 
 pub type NoteRepositoryType = Arc<dyn NoteRepository + 'static + Send + Sync>;
 

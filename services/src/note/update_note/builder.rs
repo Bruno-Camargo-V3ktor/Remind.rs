@@ -1,30 +1,28 @@
-use crate::{ServiceBuilder, UpdatePropertyService};
+use crate::{ServiceBuilder, UpdateNoteService};
 
-use super::super::PropertyRepositoryType;
+use super::super::NoteRepositoryType;
 
-pub struct UpdatePropertyBuilder {
-    repo_property: Option<PropertyRepositoryType>,
+pub struct UpdateNoteBuilder {
+    note_repo: Option<NoteRepositoryType>,
 }
 
-impl UpdatePropertyBuilder {
-    pub fn repo_property(mut self, repo: PropertyRepositoryType) -> Self {
-        self.repo_property = Some(repo);
+impl UpdateNoteBuilder {
+    pub fn note_repo(mut self, repo: NoteRepositoryType) -> Self {
+        self.note_repo = Some(repo);
         self
     }
 }
 
-impl ServiceBuilder for UpdatePropertyBuilder {
-    type S = UpdatePropertyService;
+impl ServiceBuilder for UpdateNoteBuilder {
+    type S = UpdateNoteService;
 
     fn new() -> Self {
-        Self {
-            repo_property: None,
-        }
+        Self { note_repo: None }
     }
 
     fn build(self) -> Self::S {
         Self::S {
-            property_repo: self.repo_property.expect(""),
+            note_repo: self.note_repo.expect(""),
         }
     }
 }
