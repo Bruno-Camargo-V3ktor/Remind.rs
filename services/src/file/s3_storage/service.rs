@@ -69,31 +69,28 @@ impl Service for S3StorageService {
             }
 
             FileAction::Move { src, dst, copy } => {
-                let mut path_src = path_file.clone();
-                let mut path_dst = path_file.clone();
+                let (bucket_dst, key_dst) = dst.split_once("/").unwrap_or(("", ""));
 
-                path_src.push(&src);
-                path_dst.push(&dst);
-                {
-                    let src = path_src.clone();
-                    let dst = path_dst.clone();
+                let res = client
+                    .copy_object()
+                    .copy_source(src)
+                    .bucket(bucket_dst)
+                    .key(key_dst)
+                    .send()
+                    .await;
 
-                    let mut bytes = Vec::new();
-
-                    let mut file =
-                        File::open(src).map_err(|e| FileServiceError::Error(e.to_string()))?;
-                    let _ = file.read_to_end(&mut bytes);
-
-                    let mut new_file = File::create_new(dst)
-                        .map_err(|e| FileServiceError::Error(e.to_string()))?;
-
-                    new_file
-                        .write_all(&bytes)
-                        .map_err(|e| FileServiceError::Error(e.to_string()))?;
+                if let Err(e) = res {
+                    return Err(FileServiceError::Error(e.to_string()));
                 }
 
                 if !copy {
-                    let _ = fs::remove_file(path_src);
+                    let (bucket, key) = src.split_once("/").unwrap_or(("", ""));
+
+                    let res = client.delete_object().bucket(bucket).key(key).send().await;
+
+                    if let Err(e) = res {
+                        return Err(FileServiceError::Error(e.to_string()));
+                    }
                 }
 
                 Ok(None)
