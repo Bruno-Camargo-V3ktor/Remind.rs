@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use crate::{app::App, guards::AuthenticatedUser};
 use actix_web::{get, post, web};
 use dtos::{CreateUserDTO, LoginUserDTO};
@@ -5,8 +7,8 @@ use http::Response;
 use security::token::UserToken;
 use serde::Deserialize;
 use services::{
-    CreateUserService, InfoUserService, LoginUserService, SendEmailService, Service, ServiceError,
-    To,
+    CreateUserService, FileAction, InfoUserService, LocalStorageService, LoginUserService,
+    SendEmailService, Service, ServiceError, To,
 };
 
 #[derive(Deserialize)]
@@ -81,12 +83,34 @@ pub async fn send_email_password(
     info: web::Query<ResetPasswordInfo>,
 ) -> http::Response {
     let service = app.services.get::<SendEmailService>().await.unwrap();
+    let files = app.services.get::<LocalStorageService>().await.unwrap();
     let result = app.user_repo.get_by_email(info.email.clone()).await;
 
     match result {
         Ok(u) => {
+            let base_html = files
+                .run(FileAction::Open {
+                    path: "private/email_reset_password.html".into(),
+                })
+                .await
+                .unwrap_or(None)
+                .map_or(
+                    "<h3>Click for Reset your Password</h3> <a href=\"{:url}?t={:token}\">Reset Password</a>"
+                        .to_string(),
+                    |mut f| {
+                        let mut buffer = String::new();
+                        let _ = f.read_to_string(&mut buffer);
+
+                        buffer
+                    },
+                );
+
             let token = UserToken::new(&app.config.security.reset_key, 1, u.id);
             let url = info.url.clone();
+
+            let body = base_html
+                .replace("{:url}", &url)
+                .replace("{:token}", token.0.as_str());
 
             let args = (
                 To {
@@ -94,10 +118,7 @@ pub async fn send_email_password(
                     email: u.email,
                 },
                 "Reset Password".to_string(),
-                format!(
-                    "<h3>Click for Reset your Password</h3> <a href=\"{}?t={}\">Reset Password</a>",
-                    url, token.0
-                ),
+                body,
             );
 
             match service.run(args).await {
