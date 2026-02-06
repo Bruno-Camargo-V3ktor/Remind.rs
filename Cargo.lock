@@ -805,6 +805,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b7b6141e96a8c160799cc2d5adecd5cbbe5054cb8c7c4af53da0f83bb7ad256"
 dependencies = [
  "aws-lc-sys",
+ "untrusted 0.7.1",
  "zeroize",
 ]
 
@@ -6991,6 +6992,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "domain",
+ "rustls 0.23.36",
  "serde",
  "serde_json",
  "surrealdb",
@@ -7114,7 +7116,7 @@ dependencies = [
  "cfg-if",
  "getrandom 0.2.16",
  "libc",
- "untrusted",
+ "untrusted 0.9.0",
  "windows-sys 0.52.0",
 ]
 
@@ -7385,7 +7387,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b6275d1ee7a1cd780b64aca7726599a1dbc893b1e64144529e55c3c2f745765"
 dependencies = [
  "ring",
- "untrusted",
+ "untrusted 0.9.0",
 ]
 
 [[package]]
@@ -7397,7 +7399,7 @@ dependencies = [
  "aws-lc-rs",
  "ring",
  "rustls-pki-types",
- "untrusted",
+ "untrusted 0.9.0",
 ]
 
 [[package]]
@@ -7494,7 +7496,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da046153aa2352493d6cb7da4b6e5c0c057d8a1d0a9aa8560baffdd945acd414"
 dependencies = [
  "ring",
- "untrusted",
+ "untrusted 0.9.0",
 ]
 
 [[package]]
@@ -7777,6 +7779,7 @@ dependencies = [
  "futures-util",
  "http 0.1.0",
  "repository",
+ "rustls 0.23.36",
  "security",
  "serde",
  "serde_json",
@@ -7791,8 +7794,10 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "aws-config",
+ "aws-lc-rs",
  "aws-sdk-s3",
  "aws-smithy-types",
+ "chrono",
  "domain",
  "dtos",
  "lettre",
@@ -8215,9 +8220,9 @@ dependencies = [
 
 [[package]]
 name = "surrealdb"
-version = "2.4.1"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f921fcafdc840d36a4378ef7639fcb2731a21a858b048de83f0bd7194c242479"
+checksum = "62b7720b39ce2985efbfa10858b7397ffd95655a9bab6d9dfaa03622bbdc3bc2"
 dependencies = [
  "arrayvec",
  "async-channel",
@@ -8257,9 +8262,9 @@ dependencies = [
 
 [[package]]
 name = "surrealdb-core"
-version = "2.4.1"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eae1a46c6d68a61c0a270f456a152433093f4d5c0e71c45eea64f95e95d68bd9"
+checksum = "c48e42c81713be2f9b3dae64328999eafe8b8060dd584059445a908748b39787"
 dependencies = [
  "addr",
  "ahash 0.8.12",
@@ -8287,6 +8292,7 @@ dependencies = [
  "geo",
  "geo-types",
  "getrandom 0.3.4",
+ "hashbrown 0.14.5",
  "hex",
  "http 1.4.0",
  "ipnet",
@@ -9112,6 +9118,12 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
+
+[[package]]
+name = "untrusted"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
 
 [[package]]
 name = "untrusted"

@@ -3,6 +3,7 @@ use crate::{Service, TempFile, file::content_type};
 
 use aws_config::{self, Region};
 use aws_sdk_s3::{self as s3, primitives::ByteStream};
+use chrono::Utc;
 
 pub struct S3StorageService {
     pub url: String,
@@ -70,9 +71,10 @@ impl Service for S3StorageService {
                 let bytes = data.into_bytes().into_iter().collect::<Vec<u8>>();
 
                 let file_path = format!(
-                    "{}/{}_{}",
+                    "{}/{}_{}_{}",
                     self.temp_files_path,
                     bucket,
+                    Utc::now().timestamp(),
                     key.split("/").last().unwrap_or("")
                 );
                 let temp_file = TempFile::from_bytes(bytes, file_path);

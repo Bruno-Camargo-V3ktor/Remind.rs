@@ -21,6 +21,8 @@ mod utils;
 
 #[actix_web::main]
 async fn main() {
+    let _ = rustls::crypto::ring::default_provider().install_default();
+
     let _ = dotenv::dotenv();
     let db = connection_db().await;
 

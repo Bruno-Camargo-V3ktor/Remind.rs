@@ -15,6 +15,7 @@ dtos = { workspace = true }
 futures-util = "0.3.31"
 http = { path = "../http/", features = ["actix-web"] }
 repository = { workspace = true }
+rustls = { version = "0.23", features = ["ring"] }
 security = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
