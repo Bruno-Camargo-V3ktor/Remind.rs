@@ -55,6 +55,7 @@ Aqui está o plano de ataque para transformar o **Remind.rs** em realidade.
 | **Auth** | `POST` | `/api/auth/register` | ❌ |
 | **Auth** | `POST` | `/api/auth/login` | ❌ |
 | **Auth** | `POST` | `/api/auth/reset-password` | ❌ |
+| **Auth** | `GET` | `/api/auth/user` | ✅ |
 | --- | --- | --- | --- |
 | **Users** | `PUT` | `/api/users` | ✅ |
 | **Users** | `POST` | `/api/users/image` | ✅ |

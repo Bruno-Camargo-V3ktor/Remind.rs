@@ -3227,6 +3227,7 @@ dependencies = [
 name = "dtos"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "domain",
  "serde",
  "validator",

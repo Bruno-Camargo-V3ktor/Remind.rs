@@ -4,7 +4,10 @@ use dtos::{CreateUserDTO, LoginUserDTO};
 use http::Response;
 use security::token::UserToken;
 use serde::Deserialize;
-use services::{CreateUserService, LoginUserService, SendEmailService, Service, ServiceError, To};
+use services::{
+    CreateUserService, InfoUserService, LoginUserService, SendEmailService, Service, ServiceError,
+    To,
+};
 
 #[derive(Deserialize)]
 struct ResetPasswordInfo {
@@ -13,11 +16,20 @@ struct ResetPasswordInfo {
 }
 
 #[get("/user")]
-pub async fn authenticated_user(
-    app: web::Data<App>,
-    _auth_user: AuthenticatedUser,
-) -> http::Response {
-    Response::success(200, &"Ok", &app.config.server.api_version)
+pub async fn authenticated_user(app: web::Data<App>, auth: AuthenticatedUser) -> http::Response {
+    let user_id = auth.get_id();
+    let service = app.services.get::<InfoUserService>().await.unwrap();
+
+    let result = service.run(user_id).await;
+
+    match result {
+        Ok(info) => http::Response::success(200, &info, &app.config.server.api_version),
+
+        Err(err) => {
+            let status_code = app.error_code(err.code());
+            http::Response::error(status_code, err.code(), err.description(), &err)
+        }
+    }
 }
 
 #[post("/register")]
