@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 
-use crate::routers::*;
+use crate::{
+    errors::{bad_req_header, not_found_header},
+    routers::*,
+};
 use actix_web::{HttpServer, web};
 use config::ConfigApp;
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
@@ -90,36 +93,40 @@ impl App {
         let app_state = web::Data::new(self.clone());
 
         HttpServer::new(move || {
-            let mut actix_app = actix_web::App::new().app_data(app_state.clone()).service(
-                web::scope("/api")
-                    .service(
-                        web::scope("/auth")
-                            .service(register_user)
-                            .service(login_user)
-                            .service(send_email_password)
-                            .service(authenticated_user),
-                    )
-                    .service(
-                        web::scope("users")
-                            .service(update_user)
-                            .service(delete_user)
-                            .service(upload_image),
-                    )
-                    .service(
-                        web::scope("notes")
-                            .service(list_notes)
-                            .service(create_note)
-                            .service(update_note)
-                            .service(delete_note),
-                    )
-                    .service(
-                        web::scope("propertys")
-                            .service(list_propertys)
-                            .service(create_property)
-                            .service(update_property)
-                            .service(delete_property),
-                    ),
-            );
+            let mut actix_app = actix_web::App::new()
+                .app_data(app_state.clone())
+                .app_data(web::JsonConfig::default().error_handler(bad_req_header))
+                .service(
+                    web::scope("/api")
+                        .service(
+                            web::scope("/auth")
+                                .service(register_user)
+                                .service(login_user)
+                                .service(send_email_password)
+                                .service(authenticated_user),
+                        )
+                        .service(
+                            web::scope("/users")
+                                .service(update_user)
+                                .service(delete_user)
+                                .service(upload_image),
+                        )
+                        .service(
+                            web::scope("/notes")
+                                .service(list_notes)
+                                .service(create_note)
+                                .service(update_note)
+                                .service(delete_note),
+                        )
+                        .service(
+                            web::scope("/propertys")
+                                .service(list_propertys)
+                                .service(create_property)
+                                .service(update_property)
+                                .service(delete_property),
+                        ),
+                )
+                .default_service(web::route().to(not_found_header));
 
             if let Some(public_dir) = &app_state.config.local_storage.public_dir {
                 actix_app = actix_app.service(actix_files::Files::new("/public", public_dir));

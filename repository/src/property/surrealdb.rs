@@ -183,7 +183,10 @@ impl PropertyRepository for PropertySurrealDbRepository {
         let mut result = self
             .db
             .query("SELECT * FROM propertys WHERE user_id = $user")
-            .bind(("user", user_id))
+            .bind((
+                "user",
+                RecordId::from_table_key("users", Uuid::from_str(&user_id.0.to_string()).unwrap()),
+            ))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
@@ -197,7 +200,10 @@ impl PropertyRepository for PropertySurrealDbRepository {
         let mut result = self
             .db
             .query("SELECT * FROM propertys WHERE user_id = $user and name = $name")
-            .bind(("user", user_id))
+            .bind((
+                "user",
+                RecordId::from_table_key("users", Uuid::from_str(&user_id.0.to_string()).unwrap()),
+            ))
             .bind(("name", name.clone()))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;

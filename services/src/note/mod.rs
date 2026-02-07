@@ -19,7 +19,7 @@ pub type NoteRepositoryType = Arc<dyn NoteRepository + 'static + Send + Sync>;
 #[derive(Error, Clone, Debug, Serialize)]
 #[serde(untagged)]
 pub enum NoteServiceErrors {
-    #[error("Property already exists with name {0}")]
+    #[error("Note already exists with name {0}")]
     NoteAlreadyExists(String),
 
     #[error("invalid field(s): {0:#?}")]
@@ -28,10 +28,10 @@ pub enum NoteServiceErrors {
     #[error("repository error, with message: {0}")]
     RepositoryError(String),
 
-    #[error("property not found")]
+    #[error("note not found")]
     NoteNotExist,
 
-    #[error("unknow property service error")]
+    #[error("unknow note service error")]
     Unknown,
 }
 

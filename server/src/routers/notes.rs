@@ -55,7 +55,7 @@ pub async fn update_note(
     app: web::Data<App>,
     auth: AuthenticatedUser,
     update_note: Json<UpdateNoteDTO>,
-    note_id_str: String,
+    note_id_str: web::Path<String>,
 ) -> http::Response {
     let user_id = auth.get_id();
     let dto = update_note.0;
@@ -89,7 +89,7 @@ pub async fn update_note(
 pub async fn delete_note(
     app: web::Data<App>,
     _auth: AuthenticatedUser,
-    note_id_str: String,
+    note_id_str: web::Path<String>,
 ) -> http::Response {
     let service = app.services.get::<DeleteNoteService>().await.unwrap();
 

@@ -7787,6 +7787,7 @@ dependencies = [
  "services",
  "surrealdb",
  "surrealdb-migrations",
+ "tokio",
 ]
 
 [[package]]

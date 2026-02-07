@@ -15,11 +15,12 @@ use std::{collections::HashMap, sync::Arc};
 
 mod app;
 mod db;
+mod errors;
 mod guards;
 mod routers;
 mod utils;
 
-#[actix_web::main]
+#[tokio::main]
 async fn main() {
     let _ = rustls::crypto::ring::default_provider().install_default();
 

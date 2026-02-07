@@ -56,7 +56,7 @@ pub async fn update_property(
     app: web::Data<App>,
     auth: AuthenticatedUser,
     update_property: Json<UpdatePropertyDTO>,
-    property_id_str: String,
+    property_id_str: web::Path<String>,
 ) -> http::Response {
     let user_id = auth.get_id();
     let dto = update_property.0;
@@ -90,7 +90,7 @@ pub async fn update_property(
 pub async fn delete_property(
     app: web::Data<App>,
     _auth: AuthenticatedUser,
-    property_id_str: String,
+    property_id_str: web::Path<String>,
 ) -> http::Response {
     let service = app.services.get::<DeletePropertyService>().await.unwrap();
 

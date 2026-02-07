@@ -113,7 +113,7 @@ impl Repository for NoteSurrealDbRepository {
 
     async fn get_by_id(&self, id: Self::Id) -> RepositoryResult<Self::Entity> {
         let uuid = Uuid::from_str(&id.0.to_string()).unwrap();
-        let op: Option<NoteResponseDTO> = self.db.select(("propertys", uuid)).await.unwrap();
+        let op: Option<NoteResponseDTO> = self.db.select(("notes", uuid)).await.unwrap();
 
         op.map(NoteEntity::from)
             .ok_or(RepositoryError::EntityNotFound(format!(
@@ -148,7 +148,7 @@ impl Repository for NoteSurrealDbRepository {
 
         let op: Option<NoteResponseDTO> = self
             .db
-            .create(("note", uuid))
+            .create(("notes", uuid))
             .content(query)
             .await
             .map_err(|e| {
@@ -197,7 +197,10 @@ impl NoteRepository for NoteSurrealDbRepository {
         let mut result = self
             .db
             .query("SELECT * FROM notes WHERE user_id = $user")
-            .bind(("user", user_id))
+            .bind((
+                "user",
+                RecordId::from_table_key("users", Uuid::from_str(&user_id.0.to_string()).unwrap()),
+            ))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;
 
@@ -210,8 +213,11 @@ impl NoteRepository for NoteSurrealDbRepository {
     async fn get_by_title(&self, user_id: UserId, title: String) -> RepositoryResult<Self::Entity> {
         let mut result = self
             .db
-            .query("SELECT * FROM propertys WHERE user_id = $user and title = $title")
-            .bind(("user", user_id))
+            .query("SELECT * FROM notes WHERE user_id = $user and title = $title")
+            .bind((
+                "user",
+                RecordId::from_table_key("users", Uuid::from_str(&user_id.0.to_string()).unwrap()),
+            ))
             .bind(("title", title.clone()))
             .await
             .map_err(|_| RepositoryError::DatabaseConnection)?;

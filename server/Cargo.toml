@@ -22,3 +22,4 @@ serde_json = { workspace = true }
 services = { workspace = true }
 surrealdb = { workspace = true }
 surrealdb-migrations = "2.4.0"
+tokio = { workspace = true }
