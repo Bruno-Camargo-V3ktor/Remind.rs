@@ -17,15 +17,15 @@ impl Service for UpdateNoteService {
         let (user_id, note_id, dto) = args;
         let propertys = dto.propertys.clone();
 
-        if dto.title.is_some() {
+        if let Some(title) = &dto.title {
             let is_existed = self
                 .note_repo
-                .get_by_title(user_id.clone(), dto.title.clone().unwrap())
+                .get_by_title(user_id.clone(), title.clone())
                 .await
                 .is_ok();
 
             if is_existed {
-                return Err(NoteServiceErrors::NoteAlreadyExists(dto.title.unwrap()));
+                return Err(NoteServiceErrors::NoteAlreadyExists(title.clone()));
             }
         }
 

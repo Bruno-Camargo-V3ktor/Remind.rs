@@ -1,18 +1,16 @@
-use std::fmt::Display;
-
 use crate::{error::ErrorInfos, meta::MetaInfos};
-use actix_web::{ResponseError, body::BoxBody, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::fmt::Display;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Response {
     #[serde(skip)]
-    status_code: u16,
-    success: bool,
-    data: Option<Value>,
-    meta: Option<MetaInfos>,
-    error: Option<ErrorInfos>,
+    pub status_code: u16, // Tornar público se precisar acessar de fora
+    pub success: bool,
+    pub data: Option<Value>,
+    pub meta: Option<MetaInfos>,
+    pub error: Option<ErrorInfos>,
 }
 
 impl Response {
@@ -46,38 +44,33 @@ impl Response {
     }
 }
 
-#[cfg(feature = "actix-web")]
-use actix_web::Responder;
-
-impl Responder for Response {
-    type Body = BoxBody;
-
-    fn customize(self) -> actix_web::CustomizeResponder<Self>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-
-    fn respond_to(self, _req: &actix_web::HttpRequest) -> actix_web::HttpResponse<Self::Body> {
-        actix_web::HttpResponseBuilder::new(StatusCode::from_u16(self.status_code).unwrap())
-            .json(self)
-    }
-}
-
 impl Display for Response {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "")
     }
 }
 
-impl ResponseError for Response {
-    fn error_response(&self) -> actix_web::HttpResponse<BoxBody> {
-        actix_web::HttpResponseBuilder::new(StatusCode::from_u16(self.status_code).unwrap())
-            .json(self)
+#[cfg(all(not(target_arch = "wasm32"), feature = "actix-web"))]
+pub mod actix {
+    use super::*;
+    use actix_web::{
+        HttpRequest, HttpResponse, Responder, ResponseError, body::BoxBody, http::StatusCode,
+    };
+
+    impl Responder for Response {
+        type Body = BoxBody;
+        fn respond_to(self, _req: &HttpRequest) -> HttpResponse<Self::Body> {
+            self.error_response()
+        }
     }
 
-    fn status_code(&self) -> StatusCode {
-        StatusCode::from_u16(self.status_code).unwrap()
+    impl ResponseError for Response {
+        fn status_code(&self) -> StatusCode {
+            StatusCode::from_u16(self.status_code).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+
+        fn error_response(&self) -> HttpResponse<BoxBody> {
+            HttpResponse::build(self.status_code()).json(self)
+        }
     }
 }

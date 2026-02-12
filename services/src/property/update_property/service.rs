@@ -16,17 +16,15 @@ impl Service for UpdatePropertyService {
     async fn run(&self, args: Self::Args) -> Result<Self::Out, PropertysServiceErrors> {
         let (user_id, property_id, dto) = args;
 
-        if dto.name.is_some() {
+        if let Some(name) = &dto.name {
             let is_existed = self
                 .property_repo
-                .get_by_name(user_id.clone(), dto.name.clone().unwrap())
+                .get_by_name(user_id.clone(), name.clone())
                 .await
                 .is_ok();
 
             if is_existed {
-                return Err(PropertysServiceErrors::PropertyAlreadyExists(
-                    dto.name.unwrap(),
-                ));
+                return Err(PropertysServiceErrors::PropertyAlreadyExists(name.clone()));
             }
         }
 

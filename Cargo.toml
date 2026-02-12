@@ -28,5 +28,5 @@ services = { path = "./services" }
 surrealdb = { version = "2.6", features = ["rustls"] }
 thiserror = "2.0.17"
 tokio = { version = "1.49.0", features = ["full"] }
-uuid = { version = "1.19.0", features = ["serde", "v4"] }
+uuid = { version = "1.19.0", features = ["js", "serde", "v4"] }
 validator = { version = "0.20", features = ["derive"] }

@@ -1,16 +1,20 @@
 [package]
 name = "web"
 version = "0.1.0"
-authors = ["Bruno-Camargo-V3ktor <bruno.ferreira.v3ktor@gmail.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 dioxus = { version = "0.7.1", features = ["router"] }
+dtos = { workspace = true }
+http = { path = "../http/" }
+reqwest = { version = "0.13.2", features = ["json"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
 
 [features]
 default = ["web"]
-web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
+web = ["dioxus/web"]
