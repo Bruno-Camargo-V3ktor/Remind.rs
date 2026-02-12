@@ -5,8 +5,8 @@ use std::fmt::Display;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Response {
-    #[serde(skip)]
-    pub status_code: u16, // Tornar público se precisar acessar de fora
+    #[serde(skip, default)]
+    pub status_code: u16,
     pub success: bool,
     pub data: Option<Value>,
     pub meta: Option<MetaInfos>,
