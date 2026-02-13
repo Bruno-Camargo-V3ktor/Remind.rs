@@ -1,5 +1,7 @@
 use domain::models::Property;
-use dtos::{CreatePropertyDTO, CreateUserDTO, InfoUserDTO, LoginUserDTO, UpdateUserDTO};
+use dtos::{
+    CreatePropertyDTO, CreateUserDTO, InfoUserDTO, LoginUserDTO, UpdatePropertyDTO, UpdateUserDTO,
+};
 use http::error::ErrorInfos;
 
 const BASE_URL: &str = "http://localhost:3000/api";
@@ -277,6 +279,45 @@ impl Backend {
             .post(format!("{BASE_URL}/propertys/"))
             .header("Authorization", token.0)
             .json(&created)
+            .send()
+            .await
+            .map_err(|e| {
+                ErrorInfos::new(
+                    "REQWEST_ERROR".into(),
+                    "Failed to send request".into(),
+                    e.to_string(),
+                )
+            })?;
+
+        let http_response: http::Response = response.json().await.map_err(|e| {
+            ErrorInfos::new(
+                "SERIALIZATION_ERROR".into(),
+                "Failed to parse response".into(),
+                e.to_string(),
+            )
+        })?;
+
+        if http_response.success {
+            let value = http_response.data.as_ref().unwrap().clone();
+            let property: Property = serde_json::from_value(value).unwrap();
+
+            Ok(property)
+        } else {
+            Err(http_response.error.unwrap())
+        }
+    }
+
+    pub async fn update_property(
+        &self,
+        token: Token,
+        id: String,
+        updated: UpdatePropertyDTO,
+    ) -> Result<Property, ErrorInfos> {
+        let response = self
+            .client
+            .put(format!("{BASE_URL}/propertys/{id}"))
+            .header("Authorization", token.0)
+            .json(&updated)
             .send()
             .await
             .map_err(|e| {
