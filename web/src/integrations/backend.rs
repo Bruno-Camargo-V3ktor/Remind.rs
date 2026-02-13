@@ -4,6 +4,8 @@ use dtos::{
     UpdatePropertyDTO, UpdateUserDTO,
 };
 use http::error::ErrorInfos;
+use reqwest::multipart;
+use serde_json::json;
 
 const BASE_URL: &str = "http://localhost:3000/api";
 
@@ -492,6 +494,62 @@ impl Backend {
             .client
             .delete(format!("{BASE_URL}/notes/{id}"))
             .header("Authorization", token.0)
+            .send()
+            .await
+            .map_err(|e| {
+                ErrorInfos::new(
+                    "REQWEST_ERROR".into(),
+                    "Failed to send request".into(),
+                    e.to_string(),
+                )
+            })?;
+
+        let http_response: http::Response = response.json().await.map_err(|e| {
+            ErrorInfos::new(
+                "SERIALIZATION_ERROR".into(),
+                "Failed to parse response".into(),
+                e.to_string(),
+            )
+        })?;
+
+        if http_response.success {
+            Ok(())
+        } else {
+            Err(http_response.error.unwrap())
+        }
+    }
+
+    pub async fn upload_profile_image(
+        &self,
+        token: Token,
+        filename: String,
+        bytes: Vec<u8>,
+    ) -> Result<(), ErrorInfos> {
+        let metadata = json!({
+            "filename": filename
+        });
+        let metadata_part = multipart::Part::text(serde_json::to_string(&metadata).unwrap());
+
+        let file_part = multipart::Part::bytes(bytes)
+            .file_name(filename)
+            .mime_str("image/png")
+            .map_err(|e| {
+                ErrorInfos::new(
+                    "REQWEST_ERROR".into(),
+                    "Failed to build Form".into(),
+                    e.to_string(),
+                )
+            })?;
+
+        let form = multipart::Form::new()
+            .part("file", file_part)
+            .part("metadata", metadata_part);
+
+        let response = self
+            .client
+            .post(format!("{BASE_URL}/users/image"))
+            .header("Authorization", token.0)
+            .multipart(form)
             .send()
             .await
             .map_err(|e| {
