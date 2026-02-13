@@ -486,4 +486,34 @@ impl Backend {
             Err(http_response.error.unwrap())
         }
     }
+
+    pub async fn delete_note(&self, token: Token, id: String) -> Result<(), ErrorInfos> {
+        let response = self
+            .client
+            .delete(format!("{BASE_URL}/notes/{id}"))
+            .header("Authorization", token.0)
+            .send()
+            .await
+            .map_err(|e| {
+                ErrorInfos::new(
+                    "REQWEST_ERROR".into(),
+                    "Failed to send request".into(),
+                    e.to_string(),
+                )
+            })?;
+
+        let http_response: http::Response = response.json().await.map_err(|e| {
+            ErrorInfos::new(
+                "SERIALIZATION_ERROR".into(),
+                "Failed to parse response".into(),
+                e.to_string(),
+            )
+        })?;
+
+        if http_response.success {
+            Ok(())
+        } else {
+            Err(http_response.error.unwrap())
+        }
+    }
 }
