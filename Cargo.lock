@@ -9556,6 +9556,7 @@ name = "web"
 version = "0.1.0"
 dependencies = [
  "dioxus",
+ "domain",
  "dtos",
  "http 0.1.0",
  "reqwest 0.13.2",
