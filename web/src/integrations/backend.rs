@@ -202,4 +202,35 @@ impl Backend {
             Err(http_response.error.unwrap())
         }
     }
+
+    pub async fn request_new_password(&self, email: String, url: String) -> Result<(), ErrorInfos> {
+        let response = self
+            .client
+            .post(format!(
+                "{BASE_URL}/auth/reset-password?email={email}&url={url}"
+            ))
+            .send()
+            .await
+            .map_err(|e| {
+                ErrorInfos::new(
+                    "REQWEST_ERROR".into(),
+                    "Failed to send request".into(),
+                    e.to_string(),
+                )
+            })?;
+
+        let http_response: http::Response = response.json().await.map_err(|e| {
+            ErrorInfos::new(
+                "SERIALIZATION_ERROR".into(),
+                "Failed to parse response".into(),
+                e.to_string(),
+            )
+        })?;
+
+        if http_response.success {
+            Ok(())
+        } else {
+            Err(http_response.error.unwrap())
+        }
+    }
 }
