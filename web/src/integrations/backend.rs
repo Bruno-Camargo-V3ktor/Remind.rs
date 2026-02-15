@@ -12,7 +12,7 @@ const BASE_URL: &str = "http://localhost:3000/api";
 #[derive(Clone, Debug)]
 pub struct Token(pub String);
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Backend {
     pub client: reqwest::Client,
 }

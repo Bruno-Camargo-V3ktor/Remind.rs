@@ -5,23 +5,26 @@ use crate::pages::{
     reset_password::ResetPasswordPage,
 };
 
+use crate::contexts::backend::BackendProvider;
+
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 pub enum Route {
-    #[route("/preview")]
-    PreviewPage { },
+    #[layout(BackendProvider)]
+        #[route("/preview")]
+        PreviewPage { },
 
-    #[route("/")]
-    CorkBoardPage {},
+        #[route("/")]
+        CorkBoardPage {},
 
-    #[route("/register")]
-    RegisterPage { },
+        #[route("/register")]
+        RegisterPage { },
 
-    #[route("/login")]
-    LoginPage { },
+        #[route("/login")]
+        LoginPage { },
 
-    #[route("/reset-password/:token")]
-    ResetPasswordPage { token: String },
+        #[route("/reset-password/:token")]
+        ResetPasswordPage { token: String },
 }
 
 /*
