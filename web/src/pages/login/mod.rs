@@ -2,12 +2,20 @@ use dioxus::prelude::*;
 
 use crate::{
     components::{Button, Subtitle, TextInput},
+    contexts::auth::AuthContext,
     pages::form::FormPageBase,
     router::Route,
 };
 
 #[component]
 pub fn LoginPage() -> Element {
+    let navigator = navigator();
+    let auth_ctx = use_context::<AuthContext>();
+
+    if auth_ctx.token().is_some() {
+        navigator.replace(Route::CorkBoardPage {});
+    }
+
     // Email Input
     let email_value = use_signal(|| String::new());
     let email_error = use_signal(|| None);

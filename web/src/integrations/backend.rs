@@ -5,11 +5,13 @@ use dtos::{
 };
 use http::error::ErrorInfos;
 use reqwest::multipart;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-const BASE_URL: &str = "http://localhost:3000/api";
+const BASE_URL: &str = "http://0.0.0.0:3000/api";
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct Token(pub String);
 
 #[derive(Default, Debug, Clone)]

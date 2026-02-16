@@ -3,9 +3,9 @@ use serde_json::Value;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ErrorInfos {
-    code: String,
-    description: String,
-    value: Value,
+    pub code: String,
+    pub description: String,
+    pub value: Value,
 }
 
 impl ErrorInfos {

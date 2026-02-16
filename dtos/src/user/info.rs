@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use domain::models::User;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct InfoUserDTO {
     pub name: String,
     pub email: String,
