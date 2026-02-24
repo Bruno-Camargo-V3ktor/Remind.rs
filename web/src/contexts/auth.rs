@@ -40,7 +40,6 @@ pub fn AuthProvider() -> Element {
     let mut properties_signal = use_signal(|| None);
     let mut notes_signal = use_signal(|| None);
 
-    let token_opt = LocalStorage::get::<Token>("token").ok();
     provide_context(AuthContext(
         token_signal,
         user_infos_signal,
