@@ -12,7 +12,7 @@ pub fn LoginPage() -> Element {
     let navigator = navigator();
     let auth_ctx = use_context::<AuthContext>();
 
-    if auth_ctx.token().is_some() {
+    if auth_ctx.token().read().is_some() {
         navigator.replace(Route::CorkBoardPage {});
     }
 

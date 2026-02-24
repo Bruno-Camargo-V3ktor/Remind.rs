@@ -1,20 +1,20 @@
 use crate::{contexts::backend::BackendContext, integrations::backend::Token, router::Route};
-use dioxus::{logger::tracing, prelude::*};
+use dioxus::prelude::*;
 use domain::models::{Note, Property};
 use dtos::InfoUserDTO;
 use gloo_storage::{LocalStorage, Storage};
 
 #[derive(Clone)]
 pub struct AuthContext(
-    Option<Token>,
+    Signal<Option<Token>>,
     Resource<Option<InfoUserDTO>>,
     Resource<Option<Vec<Property>>>,
     Resource<Option<Vec<Note>>>,
 );
 
 impl AuthContext {
-    pub fn token(&self) -> &Option<Token> {
-        &self.0
+    pub fn token(&self) -> Signal<Option<Token>> {
+        self.0
     }
 
     pub fn user_infos(&self) -> Option<InfoUserDTO> {
@@ -33,6 +33,7 @@ impl AuthContext {
 #[component]
 pub fn AuthProvider() -> Element {
     let nav = navigator();
+    let mut token_signal = use_signal(|| None);
     let api = use_context::<BackendContext>().0;
 
     let value = api.clone();
@@ -44,11 +45,8 @@ pub fn AuthProvider() -> Element {
             match token_opt {
                 Some(token) => {
                     let res = api.auth_user(token).await;
-                    if let Err(error) = &res {
-                        tracing::info!("{error:?}");
-                        if error.code == "INVALID_TOKEN".to_string() {
-                            LocalStorage::delete("token");
-                        }
+                    if let Err(_) = &res {
+                        LocalStorage::delete("token");
                     }
 
                     res.ok()
@@ -86,15 +84,33 @@ pub fn AuthProvider() -> Element {
 
     let token_opt = LocalStorage::get::<Token>("token").ok();
     provide_context(AuthContext(
-        token_opt,
+        token_signal,
         user_info,
         properties_resource,
         notes_resource,
     ));
 
-    use_effect(move || {
-        if LocalStorage::get::<Token>("token").is_err() {
-            nav.replace(Route::LoginPage {});
+    let value = api.clone();
+    use_future(move || {
+        let api = value.clone();
+
+        async move {
+            let token_opt = LocalStorage::get::<Token>("token").ok();
+            match token_opt {
+                Some(token) => {
+                    let res = api.auth_user(token.clone()).await;
+                    if let Err(_) = &res {
+                        nav.replace(Route::LoginPage {});
+                        token_signal.set(None);
+                    } else {
+                        token_signal.set(Some(token));
+                    }
+                }
+                None => {
+                    token_signal.set(None);
+                    nav.replace(Route::LoginPage {});
+                }
+            };
         }
     });
 

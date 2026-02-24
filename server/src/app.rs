@@ -4,6 +4,7 @@ use crate::{
     errors::{bad_req_header, not_found_header},
     routers::*,
 };
+use actix_cors::Cors;
 use actix_web::{HttpServer, web};
 use config::ConfigApp;
 use repository::{note::NoteRepository, property::PropertyRepository, user::UserRepository};
@@ -93,9 +94,24 @@ impl App {
         let app_state = web::Data::new(self.clone());
 
         HttpServer::new(move || {
+            //let cors = Cors::permissive();
+            let mut cors = Cors::default()
+                .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                .allowed_headers(vec![
+                    actix_web::http::header::AUTHORIZATION,
+                    actix_web::http::header::ACCEPT,
+                ])
+                .allowed_header(actix_web::http::header::CONTENT_TYPE)
+                .max_age(3600);
+
+            for origin in &app_state.config.server.cors_origins {
+                cors = cors.allowed_origin(origin);
+            }
+
             let mut actix_app = actix_web::App::new()
                 .app_data(app_state.clone())
                 .app_data(web::JsonConfig::default().error_handler(bad_req_header))
+                .wrap(cors)
                 .service(
                     web::scope("/api")
                         .service(
