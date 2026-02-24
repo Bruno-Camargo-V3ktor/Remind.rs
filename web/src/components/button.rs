@@ -19,7 +19,7 @@ pub fn Button(props: ButtonProps) -> Element {
 
     rsx! {
         div { class: "button-container",
-            button { class: "button-content {color_class}", onclick: move |_| {props.onclick.call(());},
+            button { class: "button-content {color_class}", onclick: move |e| {e.prevent_default(); props.onclick.call(());},
                 {props.icon}
                 p {class: "button-text", "{props.text}"}
             }

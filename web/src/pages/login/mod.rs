@@ -1,8 +1,9 @@
 use dioxus::prelude::*;
+use gloo_storage::{LocalStorage, Storage};
 
 use crate::{
     components::{Button, Subtitle, TextInput},
-    contexts::auth::AuthContext,
+    contexts::{auth::AuthContext, backend::BackendContext},
     pages::form::FormPageBase,
     router::Route,
 };
@@ -11,6 +12,7 @@ use crate::{
 pub fn LoginPage() -> Element {
     let navigator = navigator();
     let auth_ctx = use_context::<AuthContext>();
+    let api_ctx = use_context::<BackendContext>();
 
     if auth_ctx.token().read().is_some() {
         navigator.replace(Route::CorkBoardPage {});
@@ -27,7 +29,33 @@ pub fn LoginPage() -> Element {
     let password_validate = move |value| {};
 
     // Button Input
-    let on_click = || {};
+    let on_click = move || {
+        let api = api_ctx.0.clone();
+        let auth = auth_ctx.clone();
+        let nav = navigator.clone();
+
+        async move {
+            let api = api;
+            let nav = nav;
+            let auth = auth;
+
+            if email_error().is_some() || password_error().is_some() {
+                return;
+            }
+
+            let res = api.login_user(email_value(), password_value()).await;
+
+            match res {
+                Ok(token) => {
+                    let _ = LocalStorage::set("token", token.clone());
+                    nav.push(Route::CorkBoardPage {});
+                    auth.token().set(Some(token));
+                }
+
+                Err(_e) => {}
+            }
+        }
+    };
 
     rsx! {
         FormPageBase {
