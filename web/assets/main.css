@@ -358,6 +358,22 @@ icon {
     color: var(--content-p);
 }
 
+.rotation-icon {
+    animation: rotation-icon-loop 2s linear infinite;
+}
+
+@keyframes rotation-icon-loop {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(180deg);
+    }
+}
+
 /* Title Component */
 .title-container {
     display: flex;
