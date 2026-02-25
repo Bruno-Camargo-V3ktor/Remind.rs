@@ -10,15 +10,8 @@ use crate::{
 
 #[component]
 pub fn LoginPage() -> Element {
-    let navigator = navigator();
-    let auth_ctx = use_context::<AuthContext>();
-    let api_ctx = use_context::<BackendContext>();
     let mut send_request = use_signal(|| false);
     let mut falied_login = use_signal(|| false);
-
-    if auth_ctx.token().read().is_some() {
-        navigator.replace(Route::CorkBoardPage {});
-    }
 
     // Email Input
     let mut email_value = use_signal(|| String::new());
@@ -37,8 +30,16 @@ pub fn LoginPage() -> Element {
     };
 
     // Button Input
+    let navigator = navigator();
+    let auth_ctx = use_context::<AuthContext>();
+    let api_ctx = use_context::<BackendContext>();
+
+    if auth_ctx.token().read().is_some() {
+        navigator.replace(Route::CorkBoardPage {});
+    }
+
     let on_click = move || {
-        let api = api_ctx.0.clone();
+        let api = api_ctx.clone().0;
         let auth = auth_ctx.clone();
         let nav = navigator.clone();
 
@@ -88,6 +89,19 @@ pub fn LoginPage() -> Element {
             }
 
             send_request.set(false);
+        }
+    };
+
+    // Link Input
+    let api_ctx = use_context::<BackendContext>();
+
+    let click_reset_password = move |_| {
+        let api = api_ctx.0.clone();
+        async move {
+            let email = email_value();
+            let _ = api
+                .request_new_password(email, "http://localhost:8080".into())
+                .await;
         }
     };
 
@@ -141,7 +155,7 @@ pub fn LoginPage() -> Element {
                     div { class: "form-footer",
                         if falied_login() {
                             div {
-                                a { class: "small-link", "Clique aqui para manda um E-mail de reset de senha" }
+                                a { onclick: click_reset_password, class: "small-link", "Clique aqui para manda um E-mail de reset de senha" }
                             }
                         }
 
