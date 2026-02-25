@@ -10,22 +10,22 @@ use dioxus::prelude::*;
 #[rustfmt::skip]
 pub enum Route {
     #[layout(BackendProvider)]
-    #[layout(AuthProvider)]
-        #[route("/preview")]
-        PreviewPage { },
+        #[layout(AuthProvider)]
+            #[route("/preview")]
+            PreviewPage { },
 
-        #[route("/")]
-        CorkBoardPage {},
+            #[route("/")]
+            CorkBoardPage {},
 
-        #[route("/register")]
-        RegisterPage { },
+            #[route("/register")]
+            RegisterPage { },
 
-        #[route("/login")]
-        LoginPage { },
+            #[route("/login")]
+            LoginPage { },
+        #[end_layout]
 
         #[route("/reset-password/:token")]
         ResetPasswordPage { token: String },
-    #[end_layout]
     #[end_layout]
 
     #[route("/:..params")]

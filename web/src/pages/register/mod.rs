@@ -74,14 +74,14 @@ pub fn RegisterPage() -> Element {
             let mut is_error = false;
 
             // FirstName Validations...
-            if firstN_input.len() <= 3 {
-                firstN_error.set(Some("O Nome precisa ter no mínimo 3 letras.".into()));
+            if firstN_input.len() < 3 {
+                firstN_error.set(Some("Mínimo de 3 letras.".into()));
                 is_error = true;
             }
 
             // LastName Validations...
-            if lastN_input.len() <= 3 {
-                lastN_error.set(Some("O Sobrenome precisa ter no mínimo 3 letras.".into()));
+            if lastN_input.len() < 3 {
+                lastN_error.set(Some("Mínimo de 3 letras.".into()));
                 is_error = true;
             }
 
@@ -97,6 +97,9 @@ pub fn RegisterPage() -> Element {
             // Password Validations...
             if password_input.is_empty() {
                 password_error.set(Some("Senha não pode ser vazio.".into()));
+                is_error = true;
+            } else if password_input.len() < 4 {
+                password_error.set(Some("Senha precisa de no mínimo 4 letras.".into()));
                 is_error = true;
             }
 
@@ -116,7 +119,11 @@ pub fn RegisterPage() -> Element {
                     auth.token().set(Some(token));
                 }
 
-                Err(_) => {}
+                Err(e) => {
+                    if &e.code == "EMAIL_ALREADY_EXISTS" {
+                        email_error.set(Some("E-mail ja registrado.".into()));
+                    }
+                }
             }
 
             send_request.set(false);

@@ -503,6 +503,12 @@ icon {
     align-self: center;
 }
 
+.form-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1.6rem;
+}
+
 /* Note Component */
 .note-container {
     display: flex;

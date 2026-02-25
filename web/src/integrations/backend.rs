@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 const BASE_URL: &str = "http://localhost:3000/api";
+const RESET_URL: &str = "http://localhost:8080/reset-password";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(transparent)]
@@ -172,11 +173,7 @@ impl Backend {
         }
     }
 
-    pub async fn update_user(
-        &self,
-        token: Token,
-        update: UpdateUserDTO,
-    ) -> Result<InfoUserDTO, ErrorInfos> {
+    pub async fn update_user(&self, token: Token, update: UpdateUserDTO) -> Result<(), ErrorInfos> {
         let response = self
             .client
             .put(format!("{BASE_URL}/users/"))
@@ -201,20 +198,17 @@ impl Backend {
         })?;
 
         if http_response.success {
-            let value = http_response.data.as_ref().unwrap().clone();
-            let infos: InfoUserDTO = serde_json::from_value(value).unwrap();
-
-            Ok(infos)
+            Ok(())
         } else {
             Err(http_response.error.unwrap())
         }
     }
 
-    pub async fn request_new_password(&self, email: String, url: String) -> Result<(), ErrorInfos> {
+    pub async fn request_new_password(&self, email: String) -> Result<(), ErrorInfos> {
         let response = self
             .client
             .post(format!(
-                "{BASE_URL}/auth/reset-password?email={email}&url={url}"
+                "{BASE_URL}/auth/reset-password?email={email}&url={RESET_URL}"
             ))
             .send()
             .await

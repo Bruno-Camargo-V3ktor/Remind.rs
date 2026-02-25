@@ -99,9 +99,7 @@ pub fn LoginPage() -> Element {
         let api = api_ctx.0.clone();
         async move {
             let email = email_value();
-            let _ = api
-                .request_new_password(email, "http://localhost:8080".into())
-                .await;
+            let _ = api.request_new_password(email).await;
         }
     };
 
