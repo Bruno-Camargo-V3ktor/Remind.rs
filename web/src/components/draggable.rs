@@ -16,7 +16,7 @@ pub struct DraggleProps {
 
 #[component]
 pub fn Draggable(props: DraggleProps) -> Element {
-    //let diff = use_signal(|| None);
+    let mut mouse_pos = use_signal(|| None);
     let mut pos = props.elem_pos;
     let in_moving = props.in_moving;
 
@@ -27,7 +27,7 @@ pub fn Draggable(props: DraggleProps) -> Element {
 
             onmousemove: move |e| async move {
                 let moving = in_moving();
-                //let mut diff = diff();
+                let diff_pos = mouse_pos();
 
                 if moving {
                     let data = e.data();
@@ -36,7 +36,19 @@ pub fn Draggable(props: DraggleProps) -> Element {
                     let mouse_x = coordinates.page().x;
                     let mouse_y = coordinates.page().y;
 
-                    pos.set(Position { x: mouse_x, y: mouse_y });
+                    let diff_pos = if diff_pos.is_none() {
+                        let pos = Position {
+                          x: (pos().x - mouse_x).abs(),
+                          y: (pos().y - mouse_y).abs()
+                        };
+
+                        mouse_pos.set(Some(pos.clone()));
+                        pos
+                    } else { diff_pos.unwrap() };
+
+                    pos.set(Position { x: mouse_x - diff_pos.x, y: mouse_y - diff_pos.y });
+                } else if mouse_pos().is_some() {
+                    mouse_pos.set(None);
                 }
             },
 

@@ -597,7 +597,7 @@ icon {
     height: 100%;
 
     background: transparent;
-    color: transparent;
+    color: var(--content-p);
 
     caret-color: var(--content-p);
 
