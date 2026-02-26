@@ -37,7 +37,7 @@ pub fn WorkspaceLayout() -> Element {
             }
             "logout" => {
                 spawn(async move {
-                    sleep(Duration::from_millis(700)).await;
+                    sleep(Duration::from_millis(500)).await;
 
                     LocalStorage::delete("token");
                     auth_ctx.token().set(None);
