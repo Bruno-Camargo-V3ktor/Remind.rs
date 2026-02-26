@@ -1,8 +1,9 @@
 use crate::contexts::auth::AuthProvider;
 use crate::contexts::backend::BackendProvider;
+use crate::contexts::workspace::WorkspaceLayout;
 use crate::pages::{
     corkboard::CorkBoardPage, login::LoginPage, preview::PreviewPage, register::RegisterPage,
-    reset_password::ResetPasswordPage,
+    reset_password::ResetPasswordPage, user::UserPage,
 };
 use dioxus::prelude::*;
 
@@ -14,8 +15,13 @@ pub enum Route {
             #[route("/preview")]
             PreviewPage { },
 
-            #[route("/")]
-            CorkBoardPage {},
+            #[layout(WorkspaceLayout)]
+                #[route("/")]
+                CorkBoardPage {},
+
+                #[route("/user")]
+                 UserPage {},
+            #[end_layout]
 
             #[route("/register")]
             RegisterPage { },

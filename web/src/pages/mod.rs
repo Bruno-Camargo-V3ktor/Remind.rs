@@ -5,3 +5,4 @@ pub mod preview;
 pub mod register;
 pub mod reset_password;
 pub mod settings;
+pub mod user;
