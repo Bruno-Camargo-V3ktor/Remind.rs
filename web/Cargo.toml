@@ -21,3 +21,12 @@ default = ["web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 web = ["dioxus/web"]
+
+[profile.dev]
+opt-level = 0
+debug = 0
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1

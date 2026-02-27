@@ -1,5 +1,5 @@
 use crate::components::draggable::{Draggable, Position};
-use dioxus::{html::input_data::MouseButton, logger::tracing, prelude::*};
+use dioxus::{html::input_data::MouseButton, prelude::*};
 use domain::models::PropertyId;
 
 #[derive(Props, Clone, Debug, PartialEq)]
@@ -60,14 +60,8 @@ pub fn Note(props: NoteProps) -> Element {
                             class: "note-input",
                             value: body_raw,
                             oninput: move |e| { body_raw.set(e.value()); },
-                            onfocusout: move |_| { in_focus.set(false); },
-                            dangerous_inner_html: body_raw
-                        }
-
-                        div {
-                            class: "note-input",
-                            contenteditable: true,
                             onfocusin: move |_| { in_focus.set(true); },
+                            onfocusout: move |_| { in_focus.set(false); },
                             dangerous_inner_html: body_raw
                         }
                     }
