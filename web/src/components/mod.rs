@@ -1,5 +1,5 @@
 mod button;
-mod draggable;
+pub mod drag;
 mod floatbar;
 mod iconoir;
 mod iconoir_button;
@@ -11,7 +11,6 @@ mod textarea_input;
 mod title;
 
 pub use button::*;
-//pub use draggable::*;
 pub use floatbar::*;
 pub use iconoir::*;
 pub use iconoir_button::*;

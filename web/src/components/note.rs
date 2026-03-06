@@ -1,4 +1,4 @@
-use crate::components::draggable::{Draggable, Position};
+use crate::components::drag::{Draggable, Position};
 use dioxus::{html::input_data::MouseButton, prelude::*};
 use domain::models::PropertyId;
 
@@ -23,25 +23,14 @@ pub fn Note(props: NoteProps) -> Element {
     let mut body_raw = use_signal(|| props.body);
     let mut in_focus = use_signal(|| false);
 
-    let ondown_header = move |e: Event<MouseData>| {
-        if !in_moving() {
-            let data = e.data();
+    let toggle_moving = move |e: Event<MouseData>| {
+        e.stop_propagation();
 
-            match data.trigger_button() {
-                Some(MouseButton::Primary) => {
-                    in_moving.set(true);
-                }
-                _ => {}
-            }
-        }
-    };
-
-    let onrelease_header = move |e: Event<MouseData>| {
         let data = e.data();
-
         match data.trigger_button() {
             Some(MouseButton::Primary) => {
-                in_moving.set(false);
+                let inverse = !in_moving();
+                in_moving.set(inverse);
             }
             _ => {}
         }
@@ -50,7 +39,7 @@ pub fn Note(props: NoteProps) -> Element {
     rsx! {
         Draggable { in_moving: in_moving, elem_pos: position, style: "border-radius: 2rem;",
             div { class: "note-container",
-                header { class: "note-title", onmousedown: ondown_header, onmouseup:onrelease_header ,
+                header { class: "note-title", onmousedown: toggle_moving, onmouseup:toggle_moving ,
                     h3 { "{props.title}" }
                 }
 
