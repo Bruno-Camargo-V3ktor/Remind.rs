@@ -516,6 +516,14 @@ icon {
     overflow: hidden;
 }
 
+.draggable-disable {
+    cursor: grab;
+}
+
+.draggable-active {
+    cursor: grabbing;
+}
+
 /* Note Component */
 .note-container {
     display: flex;

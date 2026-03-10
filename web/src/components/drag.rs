@@ -30,8 +30,8 @@ pub fn Draggable(props: DraggleProps) -> Element {
 
             let diff_pos = if diff_pos.is_none() {
                 let pos = Position {
-                    x: (pos().x - mouse_x).abs(),
-                    y: (pos().y - mouse_y).abs(),
+                    x: pos().x - mouse_x,
+                    y: pos().y - mouse_y,
                 };
 
                 mouse_pos.set(Some(pos.clone()));
@@ -41,8 +41,8 @@ pub fn Draggable(props: DraggleProps) -> Element {
             };
 
             pos.set(Position {
-                x: mouse_x - diff_pos.x,
-                y: mouse_y - diff_pos.y,
+                x: mouse_x + diff_pos.x,
+                y: mouse_y + diff_pos.y,
             });
         } else if mouse_pos().is_some() {
             mouse_pos.set(None);
@@ -50,10 +50,7 @@ pub fn Draggable(props: DraggleProps) -> Element {
     };
 
     if let Some(coordinates) = props.coordinates {
-        movement(Position {
-            x: coordinates.x,
-            y: coordinates.y,
-        });
+        movement(coordinates);
     }
 
     let zi = if (props.in_moving)() { "10" } else { "auto" };

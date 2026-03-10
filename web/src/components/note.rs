@@ -36,10 +36,15 @@ pub fn Note(props: NoteProps) -> Element {
         }
     };
 
+    let class = if in_moving() {
+        "draggable-active"
+    } else {
+        "draggable-disable"
+    };
     rsx! {
         Draggable { in_moving: in_moving, elem_pos: position, style: "border-radius: 2rem;",
             div { class: "note-container",
-                header { class: "note-title", onmousedown: toggle_moving, onmouseup:toggle_moving ,
+                header { class: format!("note-title {}", class), onmousedown: toggle_moving, onmouseup:toggle_moving ,
                     h3 { "{props.title}" }
                 }
 

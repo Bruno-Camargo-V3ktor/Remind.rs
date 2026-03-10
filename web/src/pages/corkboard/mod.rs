@@ -20,20 +20,32 @@ pub fn CorkBoardPage() -> Element {
             Some(MouseButton::Primary) => {
                 let inverse = !mouse_pan();
                 mouse_pan.set(inverse);
+
+                if inverse {
+                    let coordinates = data.coordinates();
+                    coordenates.set(Position {
+                        x: coordinates.page().x,
+                        y: coordinates.page().y,
+                    });
+                }
             }
             _ => {}
         }
     };
 
+    let active_class = if mouse_pan() { "draggable-active" } else { "" };
+
     rsx! {
         div {
-            class: "corkboard-content",
+            class: format!("corkboard-content {}", active_class),
             onmousedown: toggle_pan,
             onmouseup: toggle_pan,
             onmousemove: move |e| {
-                let data = e.data();
-                let coordinates = data.coordinates();
-                coordenates.set( Position { x:  coordinates.page().x, y: coordinates.page().y } );
+                if mouse_pan() {
+                    let data = e.data();
+                    let coordinates = data.coordinates();
+                    coordenates.set( Position { x:  coordinates.page().x, y: coordinates.page().y } );
+                }
             }
         }
 
@@ -43,7 +55,15 @@ pub fn CorkBoardPage() -> Element {
                 body: "",
                 propertys: vec![],
                 widht: 300.0,
-                height: 300.0
+                height: 300.0,
+            }
+
+            Note {
+                title: "Minha Nota 2",
+                body: "asdasdad",
+                propertys: vec![],
+                widht: 100.0,
+                height: 100.0,
             }
         }
     }
