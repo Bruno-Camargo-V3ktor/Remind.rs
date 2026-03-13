@@ -1,21 +1,51 @@
-use gloo_timers::future::sleep;
-use std::time::Duration;
-
 use crate::{
-    components::{FloatBar, FloatBarButton, Title},
+    components::{drag::Position, FloatBar, FloatBarButton, Title},
     contexts::auth::AuthContext,
     router::Route,
 };
 use dioxus::prelude::*;
+use domain::models::NoteId;
 use gloo_storage::{LocalStorage, Storage};
+use gloo_timers::future::sleep;
+use std::{collections::HashMap, time::Duration};
 
-#[derive(Default, Clone)]
-pub struct WorkspaceContext();
+#[derive(Clone)]
+pub struct InteractiveNote {
+    pub edited: bool,
+    pub fixed: bool,
+    pub height: f64,
+    pub widht: f64,
+    pub position: Position,
+}
+
+#[derive(Clone)]
+pub struct WorkspaceContext {
+    pub interactive_notes: Signal<HashMap<NoteId, InteractiveNote>>,
+}
 
 #[component]
 pub fn WorkspaceLayout() -> Element {
     let auth_ctx = use_context::<AuthContext>();
-    provide_context(WorkspaceContext::default());
+    let mut notes = use_signal(|| HashMap::new());
+
+    if let Some(Ok(ns)) = (auth_ctx.notes())() {
+        for note in ns {
+            notes.insert(
+                note.id,
+                InteractiveNote {
+                    edited: false,
+                    fixed: false,
+                    height: 300.0,
+                    widht: 300.0,
+                    position: Position { x: 0.0, y: 0.0 },
+                },
+            );
+        }
+    }
+
+    provide_context(WorkspaceContext {
+        interactive_notes: notes,
+    });
 
     let active_floatbar = use_signal(|| String::from("home"));
     let floatbar_handle = move |(action, mut state): (String, Signal<String>)| {
