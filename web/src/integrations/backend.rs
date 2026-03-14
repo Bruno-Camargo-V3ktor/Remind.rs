@@ -1,7 +1,7 @@
 use domain::models::{Note, Property};
 use dtos::{
-    CreateNoteDTO, CreatePropertyDTO, CreateUserDTO, InfoUserDTO, LoginUserDTO, UpdateNoteDTO,
-    UpdatePropertyDTO, UpdateUserDTO,
+    CreateNoteDTO, CreatePropertyDTO, CreateUserDTO, InfoUserDTO, LoginUserDTO, NoteInfoDTO,
+    UpdateNoteDTO, UpdatePropertyDTO, UpdateUserDTO,
 };
 use http::error::ErrorInfos;
 use reqwest::multipart;
@@ -375,7 +375,7 @@ impl Backend {
         }
     }
 
-    pub async fn list_notes(&self, token: Token) -> Result<Vec<Note>, ErrorInfos> {
+    pub async fn list_notes(&self, token: Token) -> Result<Vec<NoteInfoDTO>, ErrorInfos> {
         let response = self
             .client
             .get(format!("{BASE_URL}/notes/"))
@@ -400,7 +400,7 @@ impl Backend {
 
         if http_response.success {
             let value = http_response.data.as_ref().unwrap().clone();
-            let notes: Vec<Note> = serde_json::from_value(value).unwrap();
+            let notes: Vec<NoteInfoDTO> = serde_json::from_value(value).unwrap();
 
             Ok(notes)
         } else {

@@ -1,7 +1,7 @@
 use crate::{contexts::backend::BackendContext, integrations::backend::Token, router::Route};
 use dioxus::prelude::*;
-use domain::models::{Note, Property};
-use dtos::InfoUserDTO;
+use domain::models::Property;
+use dtos::{InfoUserDTO, NoteInfoDTO};
 use gloo_storage::{LocalStorage, Storage};
 use http::error::ErrorInfos;
 
@@ -10,7 +10,7 @@ pub struct AuthContext(
     Signal<Option<Token>>,
     Signal<Option<Result<InfoUserDTO, ErrorInfos>>>,
     Signal<Option<Result<Vec<Property>, ErrorInfos>>>,
-    Signal<Option<Result<Vec<Note>, ErrorInfos>>>,
+    Signal<Option<Result<Vec<NoteInfoDTO>, ErrorInfos>>>,
 );
 
 impl AuthContext {
@@ -25,7 +25,7 @@ impl AuthContext {
         self.2
     }
 
-    pub fn notes(&self) -> Signal<Option<Result<Vec<Note>, ErrorInfos>>> {
+    pub fn notes(&self) -> Signal<Option<Result<Vec<NoteInfoDTO>, ErrorInfos>>> {
         self.3
     }
 }
@@ -48,11 +48,12 @@ pub fn AuthProvider() -> Element {
     ));
 
     let value = api.clone();
-    use_future(move || {
+    use_effect(move || {
         let api = value.clone();
+        let token_state = token_signal();
 
-        async move {
-            let token_opt = LocalStorage::get::<Token>("token").ok();
+        spawn(async move {
+            let token_opt = LocalStorage::get::<Token>("token").ok().xor(token_state);
             match token_opt {
                 Some(token) => {
                     let user_res = api.auth_user(token.clone()).await;
@@ -71,11 +72,10 @@ pub fn AuthProvider() -> Element {
                     }
                 }
                 None => {
-                    token_signal.set(None);
                     nav.replace(Route::LoginPage {});
                 }
             };
-        }
+        });
     });
 
     rsx! {

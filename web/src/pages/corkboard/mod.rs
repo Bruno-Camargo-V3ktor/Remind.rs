@@ -8,7 +8,8 @@ use crate::{
     contexts::{auth::AuthContext, workspace::WorkspaceContext},
 };
 use dioxus::{html::input_data::MouseButton, logger::tracing, prelude::*};
-use domain::models::{Note, NoteId, Property, PropertyId};
+use domain::models::{NoteId, Property, PropertyId};
+use dtos::NoteInfoDTO;
 
 const _STYLE: Asset = asset!("./style.css");
 
@@ -19,7 +20,7 @@ pub fn CorkBoardPage() -> Element {
 
     let interactive_notes = (workspace_ctx.interactive_notes)();
 
-    let notes: HashMap<NoteId, Note> = if let Some(res) = (auth_ctx.notes())() {
+    let notes: HashMap<NoteId, NoteInfoDTO> = if let Some(res) = (auth_ctx.notes())() {
         match res {
             Ok(notes) => notes
                 .into_iter()
