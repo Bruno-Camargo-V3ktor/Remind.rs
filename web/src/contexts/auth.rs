@@ -53,7 +53,10 @@ pub fn AuthProvider() -> Element {
         let token_state = token_signal();
 
         spawn(async move {
-            let token_opt = LocalStorage::get::<Token>("token").ok().xor(token_state);
+            let token_opt = LocalStorage::get::<Token>("token")
+                .ok()
+                .or(token_state.clone());
+
             match token_opt {
                 Some(token) => {
                     let user_res = api.auth_user(token.clone()).await;
@@ -62,7 +65,10 @@ pub fn AuthProvider() -> Element {
                         nav.replace(Route::LoginPage {});
                         token_signal.set(None);
                     } else {
-                        token_signal.set(Some(token.clone()));
+                        if token_state != Some(token.clone()) {
+                            token_signal.set(Some(token.clone()));
+                        }
+
                         let propertys_res = api.list_propertys(token.clone()).await;
                         let notes_res = api.list_notes(token.clone()).await;
 

@@ -11,7 +11,7 @@ use serde_json::json;
 const BASE_URL: &str = "http://localhost:3000/api";
 const RESET_URL: &str = "http://localhost:8080/reset-password";
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(transparent)]
 pub struct Token(pub String);
 
