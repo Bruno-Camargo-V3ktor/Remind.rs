@@ -12,7 +12,7 @@ pub fn PreviewPage() -> Element {
     let mut value2_signal = Signal::new(String::from(""));
     let mut error_signal = Signal::new(None);
 
-    let mut active_floatbar = use_signal(|| String::from("home"));
+    let active_floatbar = use_signal(|| String::from("home"));
 
     let validator = move |value: String| {
         if error_signal().is_some() {

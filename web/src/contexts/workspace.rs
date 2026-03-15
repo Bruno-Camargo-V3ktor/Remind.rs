@@ -91,7 +91,6 @@ pub fn WorkspaceLayout() -> Element {
                 FloatBarButton { icon: "list", action: "home" }
                 FloatBarButton { icon: "user-circle" , action: "user"}
                 FloatBarButton { icon: "log-out" , action: "logout"}
-
             }
         }
     }

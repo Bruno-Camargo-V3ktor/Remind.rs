@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::{
     components::{
         drag::{Draggable, Position},
@@ -7,11 +5,13 @@ use crate::{
     },
     contexts::{auth::AuthContext, workspace::WorkspaceContext},
 };
-use dioxus::{html::input_data::MouseButton, logger::tracing, prelude::*};
+use dioxus::{html::input_data::MouseButton, prelude::*};
 use domain::models::{NoteId, Property, PropertyId};
 use dtos::NoteInfoDTO;
+use std::collections::HashMap;
 
 const _STYLE: Asset = asset!("./style.css");
+const BG_IMG: Asset = asset!("assets/cubes.png");
 
 #[component]
 pub fn CorkBoardPage() -> Element {
@@ -45,8 +45,9 @@ pub fn CorkBoardPage() -> Element {
     };
 
     let mut mouse_pan = use_signal(|| false);
-    let mut coordenates = use_signal(|| Position { x: 0.0, y: 0.0 });
+    let mut coordenates = use_signal(|| None);
     let origin_pos = use_signal(|| Position { x: 0.0, y: 0.0 });
+    let mut bg_pos = use_signal(|| Position { x: 0.0, y: 0.0 });
 
     let toggle_pan = move |e: Event<MouseData>| {
         e.stop_propagation();
@@ -59,10 +60,10 @@ pub fn CorkBoardPage() -> Element {
 
                 if inverse {
                     let coordinates = data.coordinates();
-                    coordenates.set(Position {
+                    coordenates.set(Some(Position {
                         x: coordinates.page().x,
                         y: coordinates.page().y,
-                    });
+                    }));
                 }
             }
             _ => {}
@@ -74,8 +75,15 @@ pub fn CorkBoardPage() -> Element {
     rsx! {
         div {
             class: format!("corkboard-content {}", active_class),
-            ondoubleclick: |_| {
-                tracing::info!("duplo clique");
+            background_image: "url({BG_IMG})",
+            background_repeat: "repeat",
+            background_position: "{bg_pos().x}px {bg_pos().y}px",
+            background_size: "cover",
+            z_index: "-10",
+
+            ondoubleclick: move |_| {
+                let pos = origin_pos();
+                dioxus::logger::tracing::info!("{pos:?}");
             },
             onmousedown: toggle_pan,
             onmouseup: toggle_pan,
@@ -83,12 +91,18 @@ pub fn CorkBoardPage() -> Element {
                 if mouse_pan() {
                     let data = e.data();
                     let coordinates = data.coordinates();
-                    coordenates.set( Position { x:  coordinates.page().x, y: coordinates.page().y } );
+                    coordenates.set( Some(Position { x:  coordinates.page().x, y: coordinates.page().y }) );
+
+                    let origin_pos = origin_pos();
+                    bg_pos.set(Position {
+                        x: origin_pos.x,
+                        y: origin_pos.y,
+                    });
                 }
-            }
+            },
         }
 
-        Draggable { in_moving: mouse_pan, elem_pos: origin_pos, coordinates: coordenates(), style: "overflow: visible;",
+        Draggable { in_moving: mouse_pan, elem_pos: origin_pos.clone(), coordinates: coordenates(), style: r#"overflow: visible;"#,
             for note_id in interactive_notes.keys() {
                 if let (Some(note), Some(inote)) = (notes.get(note_id), interactive_notes.get(note_id)) {
                     Note {
