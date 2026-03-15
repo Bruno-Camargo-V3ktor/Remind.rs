@@ -11,7 +11,6 @@ use std::{collections::HashMap, time::Duration};
 
 #[derive(Clone)]
 pub struct InteractiveNote {
-    pub edited: bool,
     pub fixed: bool,
     pub height: f64,
     pub widht: f64,
@@ -26,6 +25,7 @@ pub struct WorkspaceContext {
 #[component]
 pub fn WorkspaceLayout() -> Element {
     let auth_ctx = use_context::<AuthContext>();
+    let route = use_route::<Route>();
     let mut notes = use_signal(|| HashMap::new());
 
     if let Some(Ok(ns)) = (auth_ctx.notes())() {
@@ -33,7 +33,6 @@ pub fn WorkspaceLayout() -> Element {
             notes.insert(
                 note.id,
                 InteractiveNote {
-                    edited: false,
                     fixed: false,
                     height: 300.0,
                     widht: 300.0,
@@ -47,7 +46,13 @@ pub fn WorkspaceLayout() -> Element {
         interactive_notes: notes,
     });
 
-    let active_floatbar = use_signal(|| String::from("home"));
+    let route_str = match route {
+        Route::CorkBoardPage {} => String::from("home"),
+        Route::UserPage {} => String::from("user"),
+        _ => String::from("error"),
+    };
+
+    let active_floatbar = use_signal(|| route_str);
     let floatbar_handle = move |(action, mut state): (String, Signal<String>)| {
         let auth_ctx = use_context::<AuthContext>();
 
