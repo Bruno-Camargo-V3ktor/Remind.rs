@@ -29,17 +29,19 @@ pub fn WorkspaceLayout() -> Element {
     let route = use_route::<Route>();
     let mut notes = use_signal(|| HashMap::new());
 
-    if let Some(Ok(ns)) = (auth_ctx.notes())() {
-        for note in ns {
-            notes.insert(
-                note.id,
-                InteractiveNote {
-                    fixed: false,
-                    height: 300.0,
-                    widht: 300.0,
-                    position: Position { x: 0.0, y: 0.0 },
-                },
-            );
+    if let Some(Ok(list_notes)) = (auth_ctx.notes())() {
+        for note in list_notes {
+            if let Ok(inote) = LocalStorage::get::<InteractiveNote>(note.id.0.to_string()) {
+                notes.insert(
+                    note.id,
+                    InteractiveNote {
+                        fixed: inote.fixed,
+                        height: inote.height,
+                        widht: inote.widht,
+                        position: inote.position,
+                    },
+                );
+            }
         }
     }
 
