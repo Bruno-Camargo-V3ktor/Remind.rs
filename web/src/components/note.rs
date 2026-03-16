@@ -1,11 +1,18 @@
-use crate::components::drag::{Draggable, Position};
+use crate::{
+    components::drag::{Draggable, Position},
+    contexts::workspace::InteractiveNote,
+};
 use dioxus::{html::input_data::MouseButton, prelude::*};
-use domain::models::PropertyId;
+use domain::models::{NoteId, PropertyId};
+use gloo_storage::{LocalStorage, Storage};
 
 #[derive(Props, Clone, Debug, PartialEq)]
 pub struct NoteProps {
+    id: NoteId,
     title: String,
     body: String,
+    #[props(default)]
+    fixed: bool,
     propertys: Vec<PropertyId>,
     #[props(default = Position { x: 0.0, y: 0.0 })]
     position: Position,
@@ -17,8 +24,12 @@ pub struct NoteProps {
 
 #[component]
 pub fn Note(props: NoteProps) -> Element {
+    let id = props.id;
+    let fixed = use_signal(|| props.fixed);
     let mut in_moving = use_signal(|| false);
     let position = use_signal(|| props.position);
+    let mut height = use_signal(|| props.height);
+    let mut widht = use_signal(|| props.widht);
 
     let mut body_raw = use_signal(|| props.body);
     let mut in_focus = use_signal(|| false);
@@ -41,6 +52,24 @@ pub fn Note(props: NoteProps) -> Element {
     } else {
         "draggable-disable"
     };
+
+    use_effect(move || {
+        let fixed = fixed();
+        let position = position();
+        let height = height();
+        let widht = widht();
+
+        let _ = LocalStorage::set(
+            id.0.to_string(),
+            InteractiveNote {
+                fixed,
+                position,
+                height,
+                widht,
+            },
+        );
+    });
+
     rsx! {
         Draggable { in_moving: in_moving, elem_pos: position, style: "border-radius: 2rem;",
             div { class: "note-container",
@@ -48,7 +77,7 @@ pub fn Note(props: NoteProps) -> Element {
                     h3 { "{props.title}" }
                 }
 
-                div { class: "note-content", style: "height: {props.height}; widht: {props.widht};",
+                div { class: "note-content", height: props.height, width: props.widht,
                     div { class: "note-body",
                         textarea {
                             class: "note-input",
@@ -56,7 +85,21 @@ pub fn Note(props: NoteProps) -> Element {
                             oninput: move |e| { body_raw.set(e.value()); },
                             onfocusin: move |_| { in_focus.set(true); },
                             onfocusout: move |_| { in_focus.set(false); },
-                            dangerous_inner_html: body_raw
+                            dangerous_inner_html: body_raw,
+                            height: height(),
+                            width: widht(),
+
+                            onresize: move |e| {
+                                let data = e.data();
+
+                                match data.get_content_box_size() {
+                                    Ok(v) => {
+                                        widht.set(v.width);
+                                        height.set(v.height);
+                                    }
+                                    Err(_) => {}
+                                }
+                            },
                         }
                     }
                 }

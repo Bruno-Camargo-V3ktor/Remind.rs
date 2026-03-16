@@ -106,6 +106,7 @@ pub fn CorkBoardPage() -> Element {
             for note_id in interactive_notes.keys() {
                 if let (Some(note), Some(inote)) = (notes.get(note_id), interactive_notes.get(note_id)) {
                     Note {
+                        id: note_id.clone(),
                         title: "{note.title}",
                         body: "{note.content}",
                         propertys: vec![],

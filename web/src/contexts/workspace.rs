@@ -7,9 +7,10 @@ use dioxus::prelude::*;
 use domain::models::NoteId;
 use gloo_storage::{LocalStorage, Storage};
 use gloo_timers::future::sleep;
+use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, time::Duration};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct InteractiveNote {
     pub fixed: bool,
     pub height: f64,
