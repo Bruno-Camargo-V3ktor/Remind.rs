@@ -28,6 +28,7 @@ pub fn Note(props: NoteProps) -> Element {
     let fixed = use_signal(|| props.fixed);
     let mut in_moving = use_signal(|| false);
     let position = use_signal(|| props.position);
+
     let mut height = use_signal(|| props.height);
     let mut widht = use_signal(|| props.widht);
 
@@ -77,7 +78,7 @@ pub fn Note(props: NoteProps) -> Element {
                     h3 { "{props.title}" }
                 }
 
-                div { class: "note-content", height: props.height, width: props.widht,
+                div { class: "note-content", height: "{props.height}px", width: "{ props.widht}px",
                     div { class: "note-body",
                         textarea {
                             class: "note-input",
@@ -86,8 +87,6 @@ pub fn Note(props: NoteProps) -> Element {
                             onfocusin: move |_| { in_focus.set(true); },
                             onfocusout: move |_| { in_focus.set(false); },
                             dangerous_inner_html: body_raw,
-                            height: height(),
-                            width: widht(),
 
                             onresize: move |e| {
                                 let data = e.data();
