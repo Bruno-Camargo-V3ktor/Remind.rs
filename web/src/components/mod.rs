@@ -1,3 +1,4 @@
+mod blur_container;
 mod button;
 pub mod drag;
 mod floatbar;
@@ -10,6 +11,7 @@ mod text_input;
 mod textarea_input;
 mod title;
 
+pub use blur_container::*;
 pub use button::*;
 pub use floatbar::*;
 pub use iconoir::*;

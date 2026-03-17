@@ -1,7 +1,7 @@
 use crate::{
     components::{
         drag::{Draggable, Position},
-        Note,
+        BlurContainer, Note,
     },
     contexts::{auth::AuthContext, workspace::WorkspaceContext},
 };
@@ -75,6 +75,11 @@ pub fn CorkBoardPage() -> Element {
         }
     };
 
+    let open_context_menu = move |evt: Event<MouseData>| {
+        evt.prevent_default();
+        dioxus::logger::tracing::info!("Right Mouse Button");
+    };
+
     let active_class = if mouse_pan() { "draggable-active" } else { "" };
 
     rsx! {
@@ -105,6 +110,8 @@ pub fn CorkBoardPage() -> Element {
                     });
                 }
             },
+
+            oncontextmenu: open_context_menu
         }
 
         Draggable { in_moving: mouse_pan, elem_pos: origin_pos.clone(), coordinates: coordenates(), style: r#"overflow: visible;"#,
@@ -121,7 +128,8 @@ pub fn CorkBoardPage() -> Element {
                     }
                 }
             }
-
         }
+
+         BlurContainer {}
     }
 }

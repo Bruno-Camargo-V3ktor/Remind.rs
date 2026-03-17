@@ -634,6 +634,28 @@ icon {
     z-index: 1000;
 }
 
+/* Blur Container */
+.blur-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
+
+    backdrop-filter: blur(12px);
+
+    background-color: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: white;
+
+    z-index: 10000;
+}
+
 /* Corkboard Page */
 .corkboard-content {
     display: flex;
