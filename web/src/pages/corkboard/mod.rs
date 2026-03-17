@@ -8,6 +8,7 @@ use crate::{
 use dioxus::{html::input_data::MouseButton, prelude::*};
 use domain::models::{NoteId, Property, PropertyId};
 use dtos::NoteInfoDTO;
+use gloo_storage::{SessionStorage, Storage};
 use std::collections::HashMap;
 
 const _STYLE: Asset = asset!("./style.css");
@@ -46,7 +47,8 @@ pub fn CorkBoardPage() -> Element {
 
     let mut mouse_pan = use_signal(|| false);
     let mut coordenates = use_signal(|| None);
-    let origin_pos = use_signal(|| Position { x: 0.0, y: 0.0 });
+    let origin_pos =
+        use_signal(|| SessionStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
     let mut bg_pos = use_signal(|| Position { x: 0.0, y: 0.0 });
 
     let toggle_pan = move |e: Event<MouseData>| {
@@ -64,6 +66,9 @@ pub fn CorkBoardPage() -> Element {
                         x: coordinates.page().x,
                         y: coordinates.page().y,
                     }));
+                } else {
+                    let pos = bg_pos();
+                    let _ = SessionStorage::set("ck_pos", pos);
                 }
             }
             _ => {}
