@@ -4,9 +4,6 @@ use dioxus::prelude::*;
 #[derive(Clone)]
 pub struct FloatBarContext(EventHandler<(String, Signal<String>)>, Signal<String>);
 
-//#[derive(Props, Debug, Clone, PartialEq)]
-//pub struct FloatBarProps {}
-
 #[component]
 pub fn FloatBar(
     handle: EventHandler<(String, Signal<String>)>,

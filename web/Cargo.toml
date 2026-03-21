@@ -9,12 +9,15 @@ edition = "2021"
 dioxus = { version = "0.7.1", features = ["router"] }
 domain = { workspace = true }
 dtos = { workspace = true }
+getrandom = { version = "0.4.2", features = ["wasm_js"] }
 gloo-storage = "0.3.0"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 http = { path = "../http/" }
+rand = "0.10.0"
 reqwest = { version = "0.13.2", features = ["form", "json", "multipart"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
+web-sys = { version = "0.3.91", features = ["Window"] }
 
 [features]
 default = ["web"]

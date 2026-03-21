@@ -1,8 +1,5 @@
 use crate::{
-    components::{
-        drag::{Draggable, Position},
-        BlurContainer, Note,
-    },
+    components::{drag::Draggable, BlurContainer, Note, Position},
     contexts::{auth::AuthContext, workspace::WorkspaceContext},
 };
 use dioxus::{html::input_data::MouseButton, prelude::*};
@@ -11,7 +8,7 @@ use dtos::NoteInfoDTO;
 use gloo_storage::{SessionStorage, Storage};
 use std::collections::HashMap;
 
-const _STYLE: Asset = asset!("./style.css");
+const STYLE: Asset = asset!("./style.css");
 const BG_IMG: Asset = asset!("assets/cubes.png");
 
 #[component]
@@ -49,7 +46,8 @@ pub fn CorkBoardPage() -> Element {
     let mut coordenates = use_signal(|| None);
     let origin_pos =
         use_signal(|| SessionStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
-    let mut bg_pos = use_signal(|| Position { x: 0.0, y: 0.0 });
+    let mut bg_pos =
+        use_signal(|| SessionStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
 
     let toggle_pan = move |e: Event<MouseData>| {
         e.stop_propagation();
@@ -83,6 +81,8 @@ pub fn CorkBoardPage() -> Element {
     let active_class = if mouse_pan() { "draggable-active" } else { "" };
 
     rsx! {
+        document::Link {rel: "stylesheet", href: STYLE}
+
         div {
             class: format!("corkboard-content {}", active_class),
             background_image: "url({BG_IMG})",

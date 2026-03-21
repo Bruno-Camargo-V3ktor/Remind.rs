@@ -1,5 +1,5 @@
 use crate::{
-    components::drag::{Draggable, Position},
+    components::{drag::Draggable, Position},
     contexts::workspace::InteractiveNote,
 };
 use dioxus::{html::input_data::MouseButton, prelude::*};

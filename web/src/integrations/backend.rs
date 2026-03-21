@@ -20,6 +20,7 @@ pub struct Backend {
     pub client: reqwest::Client,
 }
 
+#[allow(dead_code)]
 impl Backend {
     pub async fn register_user(
         &self,

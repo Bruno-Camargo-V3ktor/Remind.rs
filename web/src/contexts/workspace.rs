@@ -1,5 +1,5 @@
 use crate::{
-    components::{drag::Position, FloatBar, FloatBarButton, Title},
+    components::{FloatBar, FloatBarButton, Position, Title},
     contexts::auth::AuthContext,
     router::Route,
 };
@@ -31,16 +31,31 @@ pub fn WorkspaceLayout() -> Element {
 
     if let Some(Ok(list_notes)) = (auth_ctx.notes())() {
         for note in list_notes {
-            if let Ok(inote) = LocalStorage::get::<InteractiveNote>(note.id.0.to_string()) {
-                notes.insert(
-                    note.id,
-                    InteractiveNote {
-                        fixed: inote.fixed,
-                        height: inote.height,
-                        widht: inote.widht,
-                        position: inote.position,
-                    },
-                );
+            match LocalStorage::get::<InteractiveNote>(note.id.0.to_string()) {
+                Ok(inote) => {
+                    notes.insert(
+                        note.id,
+                        InteractiveNote {
+                            fixed: inote.fixed,
+                            height: inote.height,
+                            widht: inote.widht,
+                            position: inote.position,
+                        },
+                    );
+                }
+                Err(_) => {
+                    let size = rand::random_range(300.0..400.0);
+
+                    notes.insert(
+                        note.id,
+                        InteractiveNote {
+                            fixed: false,
+                            height: size,
+                            widht: size,
+                            position: Position::random(),
+                        },
+                    );
+                }
             }
         }
     }
