@@ -1,5 +1,5 @@
 use crate::{
-    components::{drag::Draggable, Position},
+    components::{drag::Draggable, Iconoir, Position},
     contexts::workspace::InteractiveNote,
 };
 use dioxus::{html::input_data::MouseButton, prelude::*};
@@ -25,7 +25,11 @@ pub struct NoteProps {
 #[component]
 pub fn Note(props: NoteProps) -> Element {
     let id = props.id;
-    let fixed = use_signal(|| props.fixed);
+    let mut fixed = use_signal(|| props.fixed);
+
+    let mut hover_icon_fixed = use_signal(|| false);
+    let mut hover_icon_color = use_signal(|| false);
+
     let mut in_moving = use_signal(|| false);
     let position = use_signal(|| props.position);
 
@@ -48,7 +52,7 @@ pub fn Note(props: NoteProps) -> Element {
         }
     };
 
-    let class = if in_moving() {
+    let draggable_class = if in_moving() {
         "draggable-active"
     } else {
         "draggable-disable"
@@ -73,32 +77,55 @@ pub fn Note(props: NoteProps) -> Element {
 
     rsx! {
         Draggable { in_moving: in_moving, elem_pos: position, style: "border-radius: 2rem;",
-            div { class: "note-container",
-                header { class: format!("note-title {}", class), onmousedown: toggle_moving, onmouseup:toggle_moving ,
+            div { class: format!("note-container note-container-{}  ", if fixed() {"fixed"} else {""} ),
+                header { class: format!("note-title {}", draggable_class), onmousedown: toggle_moving, onmouseup:toggle_moving ,
+                    div {}
                     h3 { "{props.title}" }
+                    div {
+                        div {
+                            class: "action-btn-note",
+                            onmouseenter: move |_| { hover_icon_color.set(true); },
+                            onmouseleave: move |_| { hover_icon_color.set(false); },
+
+                            input { r#type: "color", style: "display: none;" }
+
+                            Iconoir { style: "transform: rotateY(3.142rad);", icon: if hover_icon_color() {"fill-color-solid"} else {"fill-color"} }
+                        }
+
+                        button {
+                            class: "action-btn-note",
+                            onmouseenter: move |_| { hover_icon_fixed.set(true); },
+                            onmouseleave: move |_| { hover_icon_fixed.set(false); },
+
+                            onclick: move |_| { fixed.set(!fixed()) },
+
+                            Iconoir { icon: if fixed() || hover_icon_fixed() {"pin-solid"} else {"pin"} }
+                        }
+                    }
                 }
 
                 div { class: "note-content", height: "{props.height}px", width: "{ props.widht}px",
+                    onresize: move |e| {
+                        let data = e.data();
+
+                        match data.get_content_box_size() {
+                            Ok(v) => {
+                                widht.set(v.width);
+                                height.set(v.height);
+                            }
+                            Err(_) => {}
+                        }
+                    },
+
                     div { class: "note-body",
                         textarea {
                             class: "note-input",
                             value: body_raw,
+
                             oninput: move |e| { body_raw.set(e.value()); },
                             onfocusin: move |_| { in_focus.set(true); },
                             onfocusout: move |_| { in_focus.set(false); },
                             dangerous_inner_html: body_raw,
-
-                            onresize: move |e| {
-                                let data = e.data();
-
-                                match data.get_content_box_size() {
-                                    Ok(v) => {
-                                        widht.set(v.width);
-                                        height.set(v.height);
-                                    }
-                                    Err(_) => {}
-                                }
-                            },
                         }
                     }
                 }

@@ -119,6 +119,7 @@ pub fn CorkBoardPage() -> Element {
                 if let (Some(note), Some(inote)) = (notes.get(note_id), interactive_notes.get(note_id)) {
                     Note {
                         id: note_id.clone(),
+                        fixed: inote.fixed,
                         title: "{note.title}",
                         body: "{note.content}",
                         propertys: vec![],
@@ -130,6 +131,6 @@ pub fn CorkBoardPage() -> Element {
             }
         }
 
-         BlurContainer {}
+         //BlurContainer {}
     }
 }

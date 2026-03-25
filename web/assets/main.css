@@ -58,7 +58,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 1.6rem;
 }
 
 #main {
@@ -574,7 +573,7 @@ icon {
     width: 100%;
     height: 4.5rem;
 
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
     transform: translateY(-4.5rem);
@@ -582,11 +581,36 @@ icon {
     transition: transform 0.15s ease-out;
 }
 
+.note-title div {
+    flex: 0.2;
+    max-width: 100%;
+    max-height: 100%;
+
+    padding: 0.1rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.note-title h3 {
+    flex: 0.6;
+    text-align: center;
+}
+
 .note-container:hover .note-title {
     transform: translateY(0);
 }
 
 .note-container:hover .note-content {
+    padding-top: 4.5rem;
+}
+
+.note-container-fixed .note-title {
+    transform: translateY(0);
+}
+
+.note-container-fixed .note-content {
     padding-top: 4.5rem;
 }
 
@@ -632,6 +656,20 @@ icon {
     transform: translateX(-50%);
 
     z-index: 1000;
+}
+
+.action-btn-note {
+    background-color: transparent;
+    border: none;
+}
+
+.action-btn-note .icon {
+    color: var(--content-s);
+    font-size: 1.8rem;
+}
+
+.action-btn-note .icon:hover {
+    cursor: pointer;
 }
 
 /* Blur Container */
