@@ -24,7 +24,7 @@ pub struct NoteProps {
 
 #[component]
 pub fn Note(props: NoteProps) -> Element {
-    let id = props.id;
+    let id = props.id.clone();
     let mut fixed = use_signal(|| props.fixed);
 
     let mut hover_icon_fixed = use_signal(|| false);
@@ -38,6 +38,8 @@ pub fn Note(props: NoteProps) -> Element {
 
     let mut body_raw = use_signal(|| props.body);
     let mut in_focus = use_signal(|| false);
+
+    let mut color_value = use_signal(|| 0_u32);
 
     let toggle_moving = move |e: Event<MouseData>| {
         e.stop_propagation();
@@ -87,9 +89,24 @@ pub fn Note(props: NoteProps) -> Element {
                             onmouseenter: move |_| { hover_icon_color.set(true); },
                             onmouseleave: move |_| { hover_icon_color.set(false); },
 
-                            input { r#type: "color", style: "display: none;" }
+                            input {
+                                id: format!("color-input-{:?}", id.clone().0),
+                                r#type: "color",
+                                value: format!("#{:06x}", color_value()),
+                                style: "display: none;",
+                                onchange: move |e| {
+                                    let data = e.data();
 
-                            Iconoir { style: "transform: rotateY(3.142rad);", icon: if hover_icon_color() {"fill-color-solid"} else {"fill-color"} }
+                                    let hex_value = data.value().replace("#", "");
+                                    let color = u32::from_str_radix(&hex_value, 16).unwrap();
+
+                                    color_value.set(color);
+                                    dioxus::logger::tracing::info!("{}", color);
+                                }
+                            }
+                            label { for: format!("color-input-{:?}", id.clone().0),
+                                Iconoir { style: "transform: rotateY(3.142rad);", icon: if hover_icon_color() {"fill-color-solid"} else {"fill-color"} }
+                            }
                         }
 
                         button {
