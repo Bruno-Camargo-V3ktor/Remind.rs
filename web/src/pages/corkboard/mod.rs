@@ -1,11 +1,11 @@
 use crate::{
-    components::{drag::Draggable, BlurContainer, Note, Position},
+    components::{drag::Draggable, Note, Position},
     contexts::{auth::AuthContext, workspace::WorkspaceContext},
 };
 use dioxus::{html::input_data::MouseButton, prelude::*};
 use domain::models::{NoteId, Property, PropertyId};
 use dtos::NoteInfoDTO;
-use gloo_storage::{SessionStorage, Storage};
+use gloo_storage::{LocalStorage, Storage};
 use std::collections::HashMap;
 
 const STYLE: Asset = asset!("./style.css");
@@ -45,9 +45,9 @@ pub fn CorkBoardPage() -> Element {
     let mut mouse_pan = use_signal(|| false);
     let mut coordenates = use_signal(|| None);
     let origin_pos =
-        use_signal(|| SessionStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
+        use_signal(|| LocalStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
     let mut bg_pos =
-        use_signal(|| SessionStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
+        use_signal(|| LocalStorage::get("ck_pos").unwrap_or(Position { x: 0.0, y: 0.0 }));
 
     let toggle_pan = move |e: Event<MouseData>| {
         e.stop_propagation();
@@ -66,7 +66,7 @@ pub fn CorkBoardPage() -> Element {
                     }));
                 } else {
                     let pos = bg_pos();
-                    let _ = SessionStorage::set("ck_pos", pos);
+                    let _ = LocalStorage::set("ck_pos", pos);
                 }
             }
             _ => {}

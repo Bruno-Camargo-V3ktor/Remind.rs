@@ -64,6 +64,7 @@ pub fn AuthProvider() -> Element {
                     if let Err(_) = &user_res {
                         nav.replace(Route::LoginPage {});
                         token_signal.set(None);
+                        LocalStorage::delete("token");
                     } else {
                         if token_state != Some(token.clone()) {
                             token_signal.set(Some(token.clone()));
